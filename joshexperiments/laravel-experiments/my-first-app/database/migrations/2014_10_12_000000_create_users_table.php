@@ -22,6 +22,17 @@ class CreateUsersTable extends Migration {
 				  ->unique()
 				  ->nullable();
 			$table->string('password', 60);
+			$table->string('usertype', 32);
+			$table->integer('professional_id')
+				  ->unsigned();
+			$table->foreign('professional_id')
+				  ->references('professional_id')->on('professionals')
+				  ->onDelete('cascade');
+			$table->integer('supplier_id')
+				  ->unsigned();
+			$table->foreign('supplier_id')
+				  ->references('supplier_id')->on('suppliers')
+				  ->onDelete('cascade');
 			$table->rememberToken();
 			$table->timestamps();
 		});

@@ -16,7 +16,7 @@ class ResearchNote extends Eloquent {
 	/**
 	* Fillable values
 	*/
-	protected $fillable = ['title', 'research_text'];
+	protected $fillable = ['user_id', 'title', 'research_text'];
 	
 	/**
 	* Hidden attributes

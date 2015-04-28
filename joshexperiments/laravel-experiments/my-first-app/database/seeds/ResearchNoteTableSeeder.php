@@ -24,7 +24,7 @@ class ResearchNoteTableSeeder extends Seeder {
 			'updated_at'	=> new DateTime()
 		));
 		ResearchNote::create(array(
-			'user_id'		=> 2,
+			'user_id'		=> 1,
 			'title' 		=> 'Example Research Title',
 			'research_text'	=> 'Example Text (not so big)',
 			'slug' 			=> 'test-slug',
@@ -32,7 +32,7 @@ class ResearchNoteTableSeeder extends Seeder {
 			'updated_at'	=> new DateTime()
 		));
 		ResearchNote::create(array(
-			'user_id'		=> 2,
+			'user_id'		=> 1,
 			'title' 		=> 'Example Research Title 2',
 			'research_text'	=> 'Example Text (bla bla bla bla)',
 			'slug' 			=> 'test-slug-another',

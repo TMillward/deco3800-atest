@@ -7,6 +7,8 @@ use App\Http\Requests\CreateNoteRequest;
 use App\Http\Controllers\Controller;
 use App\User;
 use App\ResearchNote;
+use App\Professional;
+use App\Supplier;
 use Illuminate\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\MessageBag;
@@ -16,10 +18,16 @@ class PrototypeOneController extends Controller {
 
 	private $users; // Eloquent model of user table
 	private $research_notes; // Eloquent model of research note table
+	private $professionals; // Eloquent model of professionals table
+	private $suppliers; // Eloquent model of suppliers table
 	
-	public function __construct (User $users, ResearchNote $research_notes) {
+	public function __construct (User $users, ResearchNote $research_notes, 
+								Professional $professionals, 
+								Supplier $suppliers) {
 		$this->users = $users;
 		$this->research_notes = $research_notes;
+		$this->professionals = $professionals;
+		$this->suppliers = $suppliers;
 	}
 
 	/*
@@ -52,7 +60,7 @@ class PrototypeOneController extends Controller {
 			return redirect()->intended('home/'.$user->user_id); // Authentication Succeeded
 		} else {
 			// Authentication Failed
-			// Create a message bag conaining all the errors
+			// Create a message bag containing all the errors
 			$autherrors = new MessageBag(['loginFailed' => ['Username and/or password invalid']]);
 			return redirect()->back()
 							 ->withErrors($autherrors);
@@ -70,56 +78,46 @@ class PrototypeOneController extends Controller {
 	/**
 	* Function handling plain home page
 	*/
-	public function homenouser () {
+	public function homeNoUser () {
 		return view('prototypeone.needlogin');
 	}
 	
 	/**
 	* Function handling home page of a user
 	*/
-	public function homeuser ($user_id) {
+	public function homeUser ($user_id) {
 		if (\Auth::check()) { // User should be logged in
 			$user = \Auth::user(); // Get user
-			$research_notes = $this->research_notes
-								   ->where('user_id', '=', $user->user_id)
-								   ->get(); // Get research notes
 			if ($user->user_id != $user_id) { // Wrong user id.
 				// Either user is not allowed to access, redirected
 				// to their page or they can look at the page but
 				// not do anything
 				return redirect()->intended('home/'.$user->user_id);
 			}
-			return view('prototypeone.home', compact('user'), compact('research_notes'));
+			$extrainfo; // Extra info for non-standard user
+			if (!strcmp($user->usertype, 'Seeker')) { // Simple user info
+				$extrainfo = null;
+				$research_notes = $this->research_notes
+								   ->where('user_id', '=', $user->user_id)
+								   ->get(); // Get research notes
+				return view('prototypeone.home', compact('user', 'research_notes'));
+			} else if (!strcmp($user->usertype, 'Professional')) { // Professional info
+				$extrainfo = $this->professionals->find($user->professional_id);
+				return view('prototypeone.home', compact('user', 'extrainfo'));
+			} else if (!strcmp($user->usertype, 'Supplier')) { // Supplier info
+				$extrainfo = $this->suppliers->find($user->supplier_id);
+				return view('prototypeone.home', compact('user', 'extrainfo'));
+			}
+			return view('prototypeone.home', compact('user', 'research_notes'));
 		} else {
 			return redirect()->route('home_no_user_path');
 		}
 	}
 	
 	/**
-	* Function handling register page
-	*/
-	public function register () {
-		return view("prototypeone.register");
-	}
-	
-	/**
-	* Function handling registration of a user
-	*/
-	public function newaccount (RegisterRequest $request) {
-		/* Create Database Instance */
-		$user = new User;
-		$user->username = $request->get('username');
-		$user->name = $request->get('name');
-		$user->email = $request->get('email');
-		$user->password = \Hash::make($request->get('password'));
-		$user->save(); // Finish creating User
-		return view("prototypeone.accountapproved", compact('user'));
-	}
-	
-	/**
 	* Function handling viewing a research note
 	*/
-	public function viewnote ($user_id, $research_note_id) {
+	public function viewNote ($user_id, $research_note_id) {
 		if (\Auth::check()) { // User should be logged in
 			$user = \Auth::user(); // Get user
 			if ($user->user_id != $user_id) { // Wrong user id.
@@ -141,7 +139,7 @@ class PrototypeOneController extends Controller {
 	/**
 	* Function handling creating a new note
 	*/
-	public function createnote ($user_id) {
+	public function createNote ($user_id) {
 		if (\Auth::check()) { // User should be logged in
 			$user = \Auth::user(); // Get user
 			if ($user->user_id != $user_id) { // Wrong user id.
@@ -159,7 +157,7 @@ class PrototypeOneController extends Controller {
 	/**
 	* Function validating and authenticating a new note
 	*/
-	public function createnotecheck (CreateNoteRequest $request) {
+	public function createNoteCheck (CreateNoteRequest $request) {
 		/* Create Database Instance */
 		$note = new ResearchNote; /* Create New Database Instance */
 		$user = \Auth::user(); // Current User
@@ -176,7 +174,7 @@ class PrototypeOneController extends Controller {
 	/**
 	* Function handling editing a research note
 	*/
-	public function editnote ($user_id, $research_note_id) {
+	public function editNote ($user_id, $research_note_id) {
 		if (\Auth::check()) { // User should be logged in
 			$user = \Auth::user(); // Get user
 			if ($user->user_id != $user_id) { // Wrong user id.
@@ -198,7 +196,7 @@ class PrototypeOneController extends Controller {
 	/**
 	* Function checking the edit of a research note
 	*/
-	public function editnotecheck (CreateNoteRequest $request, $user_id, $research_note_id) {
+	public function editNoteCheck (CreateNoteRequest $request, $user_id, $research_note_id) {
 		if (\Auth::check()) { // User should be logged in
 			$user = \Auth::user(); // Get user
 			if ($user->user_id != $user_id) { // Wrong user id.
@@ -226,7 +224,7 @@ class PrototypeOneController extends Controller {
 	/**
 	* Function handling deleting a research note
 	*/
-	public function deletenote ($user_id, $research_note_id) {
+	public function deleteNote ($user_id, $research_note_id) {
 		if (\Auth::check()) { // User should be logged in
 			$user = \Auth::user(); // Get user
 			if ($user->user_id != $user_id) { // Wrong user id.
@@ -248,7 +246,7 @@ class PrototypeOneController extends Controller {
 	/**
 	* Function handling actually deleting the research note
 	*/
-	public function deletenoteconfirm ($user_id, $research_note_id) {
+	public function deleteNoteConfirm ($user_id, $research_note_id) {
 		if (\Auth::check()) { // User should be logged in
 			$user = \Auth::user(); // Get user
 			if ($user->user_id != $user_id) { // Wrong user id.
@@ -268,7 +266,88 @@ class PrototypeOneController extends Controller {
 			return redirect()->route('home_no_user_path');
 		}
 	}
+	
+	/**
+	* Function handling the root register page, 
+	* where users are given the option to register as 
+	* one of three users
+	*/
+	public function registerHome () {
+		return view("prototypeone.registerHome");
+	}
+	
+	/**
+	* Function handling registration of a user
+	*/
+	public function newAccount (RegisterRequest $request) {
+		/* Create Database Instance */
+		$user = new User;
+		$user->username = $request->get('username');
+		$user->name = $request->get('name');
+		$user->email = $request->get('email');
+		$user->password = \Hash::make($request->get('password'));
+		$user->usertype = $request->get('usertype');
+		// Handle different user types
+		if (!strcmp("Seeker", $request->get('usertype'))) { // AT Seeker 
+			$user->professional_id = 1;
+			$user->supplier_id = 1;
+		} else if (!strcmp("Professional", $request->get('usertype'))) { // AT Professional
+			// Create and save new professional object
+			$professional = new Professional;
+			$professional->title = $request->get('title');
+			$professional->about = $request->get('about');
+			$professional->qualifications = $request->get('qualifications');
+			$professional->save();
+			// Set professional id and supplier id of user model
+			$user->professional_id = $professional->professional_id;
+			$user->supplier_id = 1;
+		} else if (!strcmp("Supplier", $request->get('usertype'))) {
+			// Create and save new supplier object
+			$supplier = new Supplier;
+			$supplier->street_number = $request->get('street_number');
+			$supplier->street_name = $request->get('street_name');
+			$supplier->suburb = $request->get('suburb');
+			$supplier->state = $request->get('state');
+			$supplier->post_code = $request->get('post_code');
+			$supplier->work_phone_number = $request->get('work_phone_number');
+			$supplier->mobile_phone_number = $request->get('mobile_phone_number');
+			$supplier->description = $request->get('description');
+			$supplier->save();
+			// Set supplier id and seeker id of user model
+			$user->professional_id = 1;
+			$user->supplier_id = $supplier->supplier_id;
+		}
+		$user->save(); // Finish creating User
+		$extrainfo;
+		if (!strcmp($user->usertype, 'Seeker')) { // Simple user info
+			$extrainfo = null;
+		} else if (!strcmp($user->usertype, 'Professional')) { // Professional info
+			$extrainfo = $this->professionals->find($user->professional_id);
+		} else if (!strcmp($user->usertype, 'Supplier')) { // Supplier info
+			$extrainfo = $this->suppliers->find($user->supplier_id);
+		}
+		return view("prototypeone.accountapproved", compact('user', 'extrainfo'));
+	}
 
+	/**
+	* Functions handling three different login forms
+	*/
+	
+	/* AT Seeker login form */
+	public function seekerRegister () {
+		return view("prototypeone.seekerRegister");
+	}
+	
+	/* AT Professional login form */
+	public function professionalRegister() {
+		return view("prototypeone.professionalRegister");
+	}
+	
+	/* AT Supplier login form */
+	public function supplierRegister() {
+		return view("prototypeone.supplierRegister");
+	}
+	
 	public function pizza () {
 		return view("prototypeone.pizza");
 	}

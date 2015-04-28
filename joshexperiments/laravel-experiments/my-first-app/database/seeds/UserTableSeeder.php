@@ -8,19 +8,35 @@ class UserTableSeeder extends Seeder {
 	
 		DB::table('users')->delete();
 		User::create(array(
-			'username'	=> 'testname',
-			'name' 		=> 'Unknown Person',
-			'password'	=> Hash::make('chocolateisevil'),
-			'created_at'=> new DateTime(),
-			'updated_at'=> new DateTime()
+			'username'			=> 'testname',
+			'name' 				=> 'Unknown Person',
+			'password'			=> Hash::make('chocolateisevil'),
+			'usertype'			=> 'Seeker',
+			'professional_id'	=> 1,
+			'supplier_id'		=> 1,
+			'created_at'		=> new DateTime(),
+			'updated_at'		=> new DateTime()
 		));
 		User::create(array(
-			'username' 	=> 'testname2',
-			'name'		=> 'Chuck Norris',
-			'email'		=> 'a@y.com',
-			'password'	=> Hash::make('1234'),
-			'created_at'=> new DateTime(),
-			'updated_at'=> new DateTime()
+			'username' 			=> 'testname2',
+			'name'				=> 'Chuck Norris',
+			'email'				=> 'a@y.com',
+			'password'			=> Hash::make('1234'),
+			'usertype'			=> 'Professional',
+			'professional_id'	=> 2,
+			'supplier_id'		=> 1,
+			'created_at'		=> new DateTime(),
+			'updated_at'		=> new DateTime()
+		));
+		User::create(array(
+			'username'			=> 'testname3',
+			'name'				=> 'Random Person',
+			'password'			=> Hash::make('4321'),
+			'usertype'			=> 'Supplier',
+			'professional_id'	=> 1,
+			'supplier_id'		=> 2,
+			'created_at'		=> new DateTime(),
+			'updated_at'		=> new DateTime()
 		));
 	}
 

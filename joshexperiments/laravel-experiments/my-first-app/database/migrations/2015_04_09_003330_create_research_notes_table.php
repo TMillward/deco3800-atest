@@ -22,8 +22,10 @@ class CreateResearchNotesTable extends Migration {
 				  ->onDelete('cascade');
 			$table->string('title');
 			$table->text('research_text');
-			$table->string('slug');
+			$table->string('slug')
+				  ->nullable();
 			$table->timestamps();
+			// $table->???('tags') - Linked to specialties
 		});
 	}
 
