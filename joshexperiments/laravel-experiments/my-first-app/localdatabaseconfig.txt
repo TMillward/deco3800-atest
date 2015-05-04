@@ -1,0 +1,30 @@
+Here are the steps for setting up the local database config:
+Note: I am assuming that you have setup Homestead and all the relevant 
+data on your local machine. If you need to do so, come to me or Tom
+and we'll assist you - Josh
+
+1. On your local machine, ssh into the virtual box
+by run ssh vagrant@127.0.0.1 -p 2222
+
+2. cd into the folder of the laravel project (e.g. my-first-app)
+
+3. Connect to mysql as the homestead user by running:
+mysql -uhomestead -p. You will then get a prompt saying:
+Enter password:
+Enter "secret" (case sensitive)
+
+4. You should now be connected to mysql with the prompt:
+mysql>
+Now, enter: CREATE DATABASE atest; (with the semicolon)
+
+5. Exit out of mysql (run exit;)
+
+6. Go to config/database.php
+
+7. Go to 'connections' and go to where it says 'mysql'. Change 
+the 'username' and 'password' as follows:
+
+'username' => env('DB_USERNAME', 'homestead'),
+'password' => env('DB_PASSWORD', 'secret'),
+
+8. You should be good to go now. 
