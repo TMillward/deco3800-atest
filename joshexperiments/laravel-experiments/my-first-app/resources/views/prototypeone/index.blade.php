@@ -49,3 +49,7 @@
 	</div>
 	
 @stop
+
+@section("javascript")
+	
+@stop
