@@ -1,0 +1,4 @@
+To run phpunit tests, go up one directory from where this text file 
+is located then run "vendor/bin/phpunit".
+
+To write phpunit tests...I'll get back to you on that.
