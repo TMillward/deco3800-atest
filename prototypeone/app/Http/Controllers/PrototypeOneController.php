@@ -9,6 +9,8 @@ use App\User;
 use App\ResearchNote;
 use App\Professional;
 use App\Supplier;
+use App\ResearchCase;
+use App\Message;
 use Illuminate\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\MessageBag;
@@ -20,14 +22,19 @@ class PrototypeOneController extends Controller {
 	private $research_notes; // Eloquent model of research note table
 	private $professionals; // Eloquent model of professionals table
 	private $suppliers; // Eloquent model of suppliers table
+	private $research_cases;// Eloquent model of research cases table
+	private $messages; // Eloquent model of case messages
 	
 	public function __construct (User $users, ResearchNote $research_notes, 
 								Professional $professionals, 
-								Supplier $suppliers) {
+								Supplier $suppliers, Message $messages,
+								ResearchCase $cases) {
 		$this->users = $users;
 		$this->research_notes = $research_notes;
 		$this->professionals = $professionals;
 		$this->suppliers = $suppliers;
+		$this->research_cases = $cases;
+		$this->messages = $messages;
 	}
 
 	/*
@@ -266,7 +273,13 @@ class PrototypeOneController extends Controller {
 			return redirect()->route('home_no_user_path');
 		}
 	}
-	
+	public function submitCase ($user_id, $research_id) {}
+	public function submitCaseConfirm ($user_id) {
+		//dont need to check wether they said yes 
+		//or not as yes calls this and no just goes back to the page
+		
+	}
+	public function submitMessage ($case_id, $user_id, $message) {}
 	/**
 	* Function handling the root register page, 
 	* where users are given the option to register as 
@@ -348,6 +361,7 @@ class PrototypeOneController extends Controller {
 		return view("prototypeone.supplierRegister");
 	}
 	
+	/* test function */
 	public function pizza () {
 		return view("prototypeone.pizza");
 	}
