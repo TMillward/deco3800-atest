@@ -1,0 +1,15 @@
+Here are notes when using homestead and vagrant to locally 
+develop on your machine. This assumes that you have 
+successfully installed Vagrant, VirtualBox and Homestead 
+and set up your local environment:
+
+1. Every time you run have to "vagrant up", you have to 
+recreate the database ("atest");. To do so, 
+go to the laravel project you are working on:
+e.g. deco3800-atest/prototypeone. 
+Then, run mysql -uHomestead -p. You'll get a prompt 
+for the password, which is "secret". Then, 
+you can run SHOW Databases to check the databases that 
+currently exist. You have to then run "Create Database atest" 
+(don't remember if you need quotes around atest). This should 
+create the database for you. Then, you just migrate and seed and you're good to go. 
