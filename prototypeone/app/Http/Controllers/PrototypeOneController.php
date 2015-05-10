@@ -11,13 +11,9 @@ use App\User;
 use App\ResearchNote;
 use App\Professional;
 use App\Supplier;
-<<<<<<< HEAD
-use Illuminate\Support\Facades\Auth;
-=======
 use App\ResearchCase;
 use App\Message;
-use Illuminate\Auth;
->>>>>>> 190430d2243ad8a580f2cb82553b6afc5bda1bbe
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Facades\Session;
