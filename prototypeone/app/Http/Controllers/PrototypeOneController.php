@@ -4,12 +4,20 @@ use App\Http\Requests;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\CreateNoteRequest;
+use App\Http\Requests\SubmitCaseRequest;
+use App\Http\Requests\SubmitMessageRequest;
 use App\Http\Controllers\Controller;
 use App\User;
 use App\ResearchNote;
 use App\Professional;
 use App\Supplier;
+<<<<<<< HEAD
 use Illuminate\Support\Facades\Auth;
+=======
+use App\ResearchCase;
+use App\Message;
+use Illuminate\Auth;
+>>>>>>> 190430d2243ad8a580f2cb82553b6afc5bda1bbe
 use Illuminate\Http\Request;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Facades\Session;
@@ -20,14 +28,19 @@ class PrototypeOneController extends Controller {
 	private $research_notes; // Eloquent model of research note table
 	private $professionals; // Eloquent model of professionals table
 	private $suppliers; // Eloquent model of suppliers table
+	private $research_cases;// Eloquent model of research cases table
+	private $messages; // Eloquent model of case messages
 	
 	public function __construct (User $users, ResearchNote $research_notes, 
 								Professional $professionals, 
-								Supplier $suppliers) {
+								Supplier $suppliers, Message $messages,
+								ResearchCase $cases) {
 		$this->users = $users;
 		$this->research_notes = $research_notes;
 		$this->professionals = $professionals;
 		$this->suppliers = $suppliers;
+		$this->research_cases = $cases;
+		$this->messages = $messages;
 	}
 
 	/*
@@ -266,6 +279,30 @@ class PrototypeOneController extends Controller {
 			return redirect()->route('home_no_user_path');
 		}
 	}
+	//PANEL AND CASE FUNCTIONS
+	/*Functions for Research Cases*/	
+	public function submitCase ($user_id, $research_id) {}
+	public function submitCaseConfirm ($user_id) {
+		//dont need to check wether they said yes 
+		//or not as yes calls this and no just goes back to the page	
+	}
+	public function changeCaseStatus ($user_id, $case_id, $status){}
+	
+	/*Functions for case messages*/
+	public function submitMessage ($case_id, $user_id, $message) {}
+	public function editMessage ($case_id, $user_id, $new_message){}
+	public function deleteMessage($user_id, $case_id) {
+		//check user is either the submitting seeker or a panel member
+	}
+	public function deleteMessageConfirm($user_id, $case_id) {}
+	// display all messages attaced to given case
+	public function getMessages ( $case_id, $user_id) {}
+	
+	/*functions for viewing cases, both a list of all cases and individual cases*/
+	public function getCases($user_id) {}
+	//gets individual case and the case's messages and returns a view that displays them
+	public function getCasePage ($user_id, $case_id) {}
+	
 	
 	/**
 	* Function handling the root register page, 
@@ -348,6 +385,7 @@ class PrototypeOneController extends Controller {
 		return view("prototypeone.supplierRegister");
 	}
 	
+	/* test function */
 	public function pizza () {
 		return view("prototypeone.pizza");
 	}

@@ -12,7 +12,7 @@ class ResearchNote extends Eloquent {
 	* Primary Key
 	*/
 	protected $primaryKey = 'research_note_id';
-	
+
 	/**
 	* Fillable values
 	*/
