@@ -4,6 +4,8 @@ use App\Http\Requests;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\CreateNoteRequest;
+use App\Http\Requests\SubmitCaseRequest;
+use App\Http\Requests\SubmitMessageRequest;
 use App\Http\Controllers\Controller;
 use App\User;
 use App\ResearchNote;
@@ -273,13 +275,31 @@ class PrototypeOneController extends Controller {
 			return redirect()->route('home_no_user_path');
 		}
 	}
+	//PANEL AND CASE FUNCTIONS
+	/*Functions for Research Cases*/	
 	public function submitCase ($user_id, $research_id) {}
 	public function submitCaseConfirm ($user_id) {
 		//dont need to check wether they said yes 
-		//or not as yes calls this and no just goes back to the page
-		
+		//or not as yes calls this and no just goes back to the page	
 	}
+	public function changeCaseStatus ($user_id, $case_id, $status){}
+	
+	/*Functions for case messages*/
 	public function submitMessage ($case_id, $user_id, $message) {}
+	public function editMessage ($case_id, $user_id, $new_message){}
+	public function deleteMessage($user_id, $case_id) {
+		//check user is either the submitting seeker or a panel member
+	}
+	public function deleteMessageConfirm($user_id, $case_id) {}
+	// display all messages attaced to given case
+	public function getMessages ( $case_id, $user_id) {}
+	
+	/*functions for viewing cases, both a list of all cases and individual cases*/
+	public function getCases($user_id) {}
+	//gets individual case and the case's messages and returns a view that displays them
+	public function getCasePage ($user_id, $case_id) {}
+	
+	
 	/**
 	* Function handling the root register page, 
 	* where users are given the option to register as 

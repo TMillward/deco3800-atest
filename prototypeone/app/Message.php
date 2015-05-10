@@ -6,7 +6,7 @@ class Message extends Eloquent {
 	/**
 	* The database table used by the model
 	*/
-	protectied $table = 'messages';
+	protected $table = 'messages';
 	
 	/**
 	* Primary Key

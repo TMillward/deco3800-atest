@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 
@@ -18,6 +17,8 @@ class DatabaseSeeder extends Seeder {
 		$this->call('ProfessionalsTableSeeder');
 		$this->call('UserTableSeeder');
 		$this->call('ResearchNoteTableSeeder');
+		$this->call('ResearchCaseSeeder');
+		$this->call('MessageTableSeeder');
 	}
 
 }

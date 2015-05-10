@@ -16,7 +16,7 @@ class CreateResearchCaseTable extends Migration {
 			$table->integer('research_note_id')
 				  ->unsigned();
 			$table->foreign('research_note_id')
-				  ->references('research_note_id')->on('research_notes');
+				  ->references('research_note_id')->on('research_notes')
 				  ->onDelete('cascade');
 			$table->boolean('status'); //false for pending, true for resolved
 			$table->timestamps();
