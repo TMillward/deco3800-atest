@@ -44,7 +44,6 @@ class PrototypeOneController extends Controller {
 	*/
 	public function index () {
 		return view("prototypeone.index");
-		//return "Welcome to Sprint Zero Prototype";
 	}
 	
 	/**
@@ -52,7 +51,6 @@ class PrototypeOneController extends Controller {
 	*/
 	public function about () {
 		return view("prototypeone.about");
-		//return "This is the prototype for the Sprint Zero presentation";
 	}
 	
 	/**
@@ -64,13 +62,14 @@ class PrototypeOneController extends Controller {
 			'password' => $request->get('password')
 		); // User Input
 		if (Auth::attempt($userinfo)) {
-			// Get user info
-			$user = Auth::user();
-			return redirect()->intended('home/'.$user->user_id); // Authentication Succeeded
+			$user = Auth::user(); // Get user info
+			// Authentication succeeded
+			return redirect()->intended('home/'.$user->user_id);
 		} else {
 			// Authentication Failed
 			// Create a message bag containing all the errors
-			$autherrors = new MessageBag(['loginFailed' => ['Username and/or password invalid']]);
+			$autherrors = new MessageBag([
+				'loginFailed' => ['Username and/or password invalid']]);
 			return redirect()->back()
 							 ->withErrors($autherrors);
 		}
@@ -106,18 +105,29 @@ class PrototypeOneController extends Controller {
 			$extrainfo; // Extra info for non-standard user
 			if (!strcmp($user->usertype, 'Seeker')) { // Simple user info
 				$extrainfo = null;
-				$research_notes = $this->research_notes
-								   ->where('user_id', '=', $user->user_id)
-								   ->get(); // Get research notes
-				return view('prototypeone.home', compact('user', 'research_notes'));
-			} else if (!strcmp($user->usertype, 'Professional')) { // Professional info
-				$extrainfo = $this->professionals->find($user->professional_id);
-				return view('prototypeone.home', compact('user', 'extrainfo'));
-			} else if (!strcmp($user->usertype, 'Supplier')) { // Supplier info
-				$extrainfo = $this->suppliers->find($user->supplier_id);
-				return view('prototypeone.home', compact('user', 'extrainfo'));
+				$research_notes = 
+					$this->research_notes
+					     ->where('user_id', '=', $user->user_id)
+						 ->get(); // Get research notes
+				return view('prototypeone.home', 
+					compact('user', 'research_notes'));
+			} else if (!strcmp($user->usertype, 'Professional')) { 
+				// Professional info
+				$extrainfo = 
+					$this->professionals
+						 ->find($user->professional_id);
+				return view('prototypeone.home', 
+					compact('user', 'extrainfo'));
+			} else if (!strcmp($user->usertype, 'Supplier')) { 
+				// Supplier info
+				$extrainfo = 
+					$this->suppliers
+						 ->find($user->supplier_id);
+				return view('prototypeone.home', 
+					compact('user', 'extrainfo'));
 			}
-			return view('prototypeone.home', compact('user', 'research_notes'));
+			return view('prototypeone.home', 
+				compact('user', 'research_notes'));
 		} else {
 			return redirect()->route('home_no_user_path');
 		}
@@ -136,10 +146,12 @@ class PrototypeOneController extends Controller {
 				return redirect()->intended('home/'.$user->user_id);
 			}
 			$note = $this->research_notes
-						 ->where('research_note_id', '=', $research_note_id)
+						 ->where('research_note_id', 
+						 	'=', $research_note_id)
 						 ->get()
 						 ->first(); // Get note
-			return view("prototypeone.viewnote", compact('note'), compact('user'));
+			return view("prototypeone.viewnote", 
+				compact('note'), compact('user'));
 		} else {
 			return redirect()->route('home_no_user_path');
 		}
@@ -177,7 +189,8 @@ class PrototypeOneController extends Controller {
 		$slugcontainer = str_slug($request->get('title'), "-");
 		$note->slug = $slugcontainer;
 		$note->save(); // Finish creating Note
-		return view("prototypeone.newnoteapproved", compact('user'), compact('note'));
+		return view("prototypeone.newnoteapproved", 
+			compact('user'), compact('note'));
 	}
 	
 	/**
@@ -193,10 +206,12 @@ class PrototypeOneController extends Controller {
 				return redirect()->intended('home/'.$user->user_id);
 			}
 			$note = $this->research_notes
-						 ->where('research_note_id', '=', $research_note_id)
+						 ->where('research_note_id', 
+						 	'=', $research_note_id)
 						 ->get()
 						 ->first(); // Get note
-			return view("prototypeone.editnote", compact('user'), compact('note'));
+			return view("prototypeone.editnote", 
+				compact('user'), compact('note'));
 		} else {
 			return redirect()->route('home_no_user_path');
 		}
@@ -205,7 +220,8 @@ class PrototypeOneController extends Controller {
 	/**
 	* Function checking the edit of a research note
 	*/
-	public function editNoteCheck (CreateNoteRequest $request, $user_id, $research_note_id) {
+	public function editNoteCheck (CreateNoteRequest $request, 
+		$user_id, $research_note_id) {
 		if (Auth::check()) { // User should be logged in
 			$user = Auth::user(); // Get user
 			if ($user->user_id != $user_id) { // Wrong user id.
@@ -224,7 +240,8 @@ class PrototypeOneController extends Controller {
 			$slugcontainer = str_slug($request->get('title'), "-");
 			$note->slug = $slugcontainer;
 			$note->save(); // Finish creating Note
-			return view("prototypeone.editnoteapproved", compact('user'), compact('note'));
+			return view("prototypeone.editnoteapproved", 
+				compact('user'), compact('note'));
 		} else {
 			return redirect()->route('home_no_user_path');
 		}
@@ -233,7 +250,8 @@ class PrototypeOneController extends Controller {
 	/**
 	* Function handling deleting a research note
 	*/
-	public function deleteNote ($user_id, $research_note_id) {
+	public function deleteNote ($user_id, 
+		$research_note_id) {
 		if (Auth::check()) { // User should be logged in
 			$user = Auth::user(); // Get user
 			if ($user->user_id != $user_id) { // Wrong user id.
@@ -243,10 +261,12 @@ class PrototypeOneController extends Controller {
 				return redirect()->intended('home/'.$user->user_id);
 			}
 			$note = $this->research_notes
-						 ->where('research_note_id', '=', $research_note_id)
+						 ->where('research_note_id', 
+						 	'=', $research_note_id)
 						 ->get()
 						 ->first(); // Get note
-			return view("prototypeone.deletenoteconfirm", compact('user'), compact('note'));
+			return view("prototypeone.deletenoteconfirm", 
+				compact('user'), compact('note'));
 		} else {
 			return redirect()->route('home_no_user_path');
 		}
@@ -265,7 +285,8 @@ class PrototypeOneController extends Controller {
 				return redirect()->intended('home/'.$user->user_id);
 			}
 			$note = $this->research_notes
-						 ->where('research_note_id', '=', $research_note_id)
+						 ->where('research_note_id', 
+						 	'=', $research_note_id)
 						 ->get()
 						 ->first(); // Get note
 			// Delete the note
@@ -324,12 +345,14 @@ class PrototypeOneController extends Controller {
 		if (!strcmp("Seeker", $request->get('usertype'))) { // AT Seeker 
 			$user->professional_id = 1;
 			$user->supplier_id = 1;
-		} else if (!strcmp("Professional", $request->get('usertype'))) { // AT Professional
+		} else if (!strcmp("Professional", $request->get('usertype'))) { 
+			// AT Professional
 			// Create and save new professional object
 			$professional = new Professional;
 			$professional->title = $request->get('title');
 			$professional->about = $request->get('about');
-			$professional->qualifications = $request->get('qualifications');
+			$professional->qualifications = 
+				$request->get('qualifications');
 			$professional->save();
 			// Set professional id and supplier id of user model
 			$user->professional_id = $professional->professional_id;
@@ -342,8 +365,10 @@ class PrototypeOneController extends Controller {
 			$supplier->suburb = $request->get('suburb');
 			$supplier->state = $request->get('state');
 			$supplier->post_code = $request->get('post_code');
-			$supplier->work_phone_number = $request->get('work_phone_number');
-			$supplier->mobile_phone_number = $request->get('mobile_phone_number');
+			$supplier->work_phone_number = 
+				$request->get('work_phone_number');
+			$supplier->mobile_phone_number = 
+				$request->get('mobile_phone_number');
 			$supplier->description = $request->get('description');
 			$supplier->save();
 			// Set supplier id and seeker id of user model
@@ -354,12 +379,17 @@ class PrototypeOneController extends Controller {
 		$extrainfo;
 		if (!strcmp($user->usertype, 'Seeker')) { // Simple user info
 			$extrainfo = null;
-		} else if (!strcmp($user->usertype, 'Professional')) { // Professional info
-			$extrainfo = $this->professionals->find($user->professional_id);
-		} else if (!strcmp($user->usertype, 'Supplier')) { // Supplier info
+		} else if (!strcmp($user->usertype, 'Professional')) { 
+			// Professional info
+			$extrainfo = 
+				$this->professionals
+					 ->find($user->professional_id);
+		} else if (!strcmp($user->usertype, 'Supplier')) { 
+			// Supplier info
 			$extrainfo = $this->suppliers->find($user->supplier_id);
 		}
-		return view("prototypeone.accountapproved", compact('user', 'extrainfo'));
+		return view("prototypeone.accountapproved", 
+			compact('user', 'extrainfo'));
 	}
 
 	/**
