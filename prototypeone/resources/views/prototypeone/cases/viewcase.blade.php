@@ -2,18 +2,55 @@
 
 @section("title", "Case Notes")
 @section("content")
-	<p>{{$case_notes->title}}</p></br>
-	<p>{{$user_id}}</p></br>
-	<p>{{$case_notes->research_text}}</p>
-	
+	<h1> Case: {{ $research_note->title }} </h1>
+	<p>
+		<strong>User: </strong> {{ $user->username }}
+	</p>
+	<p>
+		<strong>Title: </strong> {{ $research_note->title }}
+	</p>
+	<p>
+		<strong>Text: </strong> 
+		<br>
+		<br>
+		{{ $research_note->research_text }} 
+	</p>
 @stop
+
 @section("message_feed")
-	@foreach($messages as $message)
-	<!--display each message-->
-		<div> 
-			<p class="user_name"> {{$message->user_id}}</p> <!--TODOquery DB for actual name-->
-			<p class="message_timestamp"> {{$message->created_at}}</p>
-			<p class="message_text"> {{$message->message}}</p>
-		</div>
-	@endforeach
+	<div class="container">
+		<h2>Messages: </h2>
+		<table class="table table-hover">
+			<tr>
+				<th>Message Content</th>
+				<th>Date Created</th>
+				<th>Date Modified</th>
+			</tr>
+			@foreach($messages as $message)
+				<tr>
+					<td>{{ $message->message }}</td>
+					<td>{{ $message->created_at }}</td>
+					<td>{{ $message->updated_at }}</td>
+				</tr>
+			@endforeach
+		</table>
+		<h2>Send a message below</h2>
+		{!! Form::open(['url' => route('send_message', 
+			[$user_id, $case_id])]) !!}
+			<div class="form-group {{$errors->has('message_text') ? 'has-error' : '' }}">
+				
+				{!! Form::label('message_text', 'Message Text') !!}
+				{!! Form::textarea('message_text', null, 
+					['class' => 'form-control', 
+					 'placeholder' => "Enter Your Message Here"]) !!}
+				{!! $errors->first('message_text', 
+									'<span class="help-block">:message</span>') !!}
+			</div>
+
+			<div class="form-group">
+				{!! Form::submit('Send a message', 
+					['class' => 'btn btn-primary']) !!}
+			</div>
+		{!! Form::close() !!}
 @stop
+
