@@ -159,7 +159,13 @@ class PrototypeOneController extends Controller {
 						 	$research_note_id)
 						 ->get()
 						 ->first(); // Get note
-			return view("prototypeone.viewnote", compact('note', 'user'));
+			$isCase = $this->research_cases
+						   ->where('research_note_id', '=', 
+						   		$research_note_id)
+						   ->get()
+						   ->first();
+			return view("prototypeone.viewnote", 
+				compact('note', 'user', 'isCase'));
 		} else {
 			return redirect()->route('home_no_user_path');
 		}
@@ -451,10 +457,37 @@ class PrototypeOneController extends Controller {
 	public function getCasePage ($user_id, $case_id) {
 		// Check user is either the submitting seeker or a panel member
 		if (Auth::check()) { // User should be logged in 
-			if (Auth::user()->user_id != $user_id) {
-				return redirect()->intended(
+			/* Check that the user id is the user who owns 
+			this case id and the professionals */
+			$panel = $this->professionals->get();
+			$owner = $this->research_notes
+						  ->find(
+						  		$this->research_cases
+						  			 ->find($case_id)
+						  			 ->research_note_id)
+						  ->user_id; 
+			if (Auth::user()->user_id != $owner) {
+				// We aren't the owner. Check if user is 
+				// a profesional
+				$valid = false;
+				for ($i = 0; $i < $this->professionals->count(); ++$i) {
+					$userInfo = $this->users
+									 ->where(
+									 	"professional_id", "=", 
+									 	$panel->professional_id
+									 )
+									 ->get();
+					if ($userInfo->user_id == Auth::user()->user_id) {
+						$valid = true;
+						break;
+					}
+				}
+				if (!$valid) {
+					return redirect()->intended(
 					'home/'.Auth::user()->user_id);
+				}
 			}
+
 			// Actual code 
 			$research_note = 
 				$this->research_notes

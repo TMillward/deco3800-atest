@@ -15,6 +15,12 @@
 		<br>
 		{{ $research_note->research_text }} 
 	</p>
+	<p>
+		{!! HTML::linkRoute('view_cases', 
+			'Click here to link back to the list of cases', 
+			[$user_id]) 
+		!!}
+	</p>
 @stop
 
 @section("message_feed")

@@ -19,4 +19,10 @@
 			!!}
 		</p>
 	@endfor
+	<p>
+		{!! HTML::linkRoute('home_user_path', 
+			'Click here to link back to your home page', 
+			[$user_id]) 
+		!!}
+	</p>
 @stop
