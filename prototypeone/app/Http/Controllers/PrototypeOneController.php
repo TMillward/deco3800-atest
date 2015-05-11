@@ -280,7 +280,7 @@ class PrototypeOneController extends Controller {
 	public function submitCase ($user_id, $research_id) {
 		if (\Auth::check()) { // User should be logged in
 			$case = new ResearchCase;
-			$case->research_note_id = $request->get('research_id');
+			$case->research_note_id = $research_id;
 			$case->status = false;
 			$case->save();
 		} else { // user not logged on
@@ -314,8 +314,6 @@ class PrototypeOneController extends Controller {
 	public function deleteMessageConfirm($user_id, $message_id) {
 		
 	}
-	// display all messages attaced to given case
-	public function getMessages ( $case_id, $user_id) {}
 	
 	/*functions for viewing cases, both a list of all cases and individual cases*/
 	public function getCases($user_id) {
@@ -324,7 +322,7 @@ class PrototypeOneController extends Controller {
 			//find all notes that are also cases
 			$cases = $this->research_notes
 						  ->whereExists(function ($query) {
-							$query->select(*)
+							$query->select('*')
 							->from($this->research_cases)
 							->whereRaw('$this->research_cases.research_note_id = $this->research_notes.research_note_id');
 							})->get();
@@ -336,7 +334,9 @@ class PrototypeOneController extends Controller {
 		}
 	}
 	//gets individual case and the case's messages and returns a view that displays them
-	public function getCasePage ($user_id, $case_id) {}
+	public function getCasePage ($user_id, $case_id) {
+		
+	}
 	
 	
 	/**

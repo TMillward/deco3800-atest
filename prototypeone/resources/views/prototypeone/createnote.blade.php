@@ -8,7 +8,7 @@
 	<div class="container">
 		<h2>Enter your details here</h2>
 		
-		{!! Form::open(['route' => 'create_note_check_path']) !!}
+		{!! Form::open(['url' => route('create_note_check_path', [$user->user_id])]) !!}
 		
 			<div class="form-group {{ $errors->has('title') ? 'has-error' : '' }}">
 				{!! Form::label('title', 

@@ -3,7 +3,7 @@
 @section("title", "Home Page")
 
 @section("content")
-	<h1>Welcome to Sprint Zero Prototype</h1>
+	<h1>Welcome to the ATEST Prototype (Version 1.5)</h1>
 	
 	<div class="container">
 		<p>{!! link_to_route('about_path', "About This Prototype") !!}</p>
