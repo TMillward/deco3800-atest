@@ -18,6 +18,7 @@
 				<p><strong>You are an Expert User!</strong></p>
 			@endif
 			<p><strong>Qualifications: </strong> {{ $extrainfo->qualifications}} </p>
+			<div>{!! HTML::linkRoute('view_cases', 'view cases', [$user->user_id]) !!}</div>
 		@elseif ($user->usertype === "Supplier")
 			<p><strong>Street Number: </strong> {{ $extrainfo->street_number}} </p>
 			<p><strong>Street Name: </strong> {{ $extrainfo->street_name}} </p>
@@ -27,6 +28,7 @@
 			<p><strong>Work Phone Number: </strong> {{ $extrainfo->work_phone_number}} </p>
 			<p><strong>Mobile Phone Number: </strong> {{ $extrainfo->mobile_phone_number}} </p>
 			<p><strong>Description: </strong> {{ $extrainfo->description}} </p>
+			
 		@endif
 		<div class="container">
 			{!! Form::open(['route' => 'logout_path', 
@@ -36,6 +38,7 @@
 				</div>
 			{!! Form::close() !!}
 		</div>
+		
 	</div>
 	
 	@if ($user->usertype === "Seeker")
