@@ -317,14 +317,16 @@ class PrototypeOneController extends Controller {
 	
 	/*functions for viewing cases, both a list of all cases and individual cases*/
 	public function getCases($user_id) {
+	
 		if (\Auth::check()) { // User should be logged in
 			//check if they are a professional and whatnot
 			//find all notes that are also cases
+			
 			$cases = $this->research_notes
 						  ->whereExists(function ($query) {
 							$query->select('*')
-							->from($this->research_cases)
-							->whereRaw('$this->research_cases.research_note_id = $this->research_notes.research_note_id');
+							->from('research_case')
+							->whereRaw('research_case.research_note_id = research_notes.research_note_id');
 							})->get();
 						  ; // Get cases
 			return view("prototypeone.cases.displaycases", compact('cases'));
