@@ -36,12 +36,15 @@
 		</table>
 		<h2>Send a message below</h2>
 		{!! Form::open(['url' => route('send_message', 
-			[$user->user_id, $case_id])]) !!}
-			<div class="form-group">
+			[$user_id, $case_id])]) !!}
+			<div class="form-group 
+				{{ $errors->has('message_text') ? 'has-error' : '' }}">
 				{!! Form::label('message_text', 'Message Text') !!}
 				{!! Form::textarea('message_text', null, 
 					['class' => 'form-control', 
 					 'placeholder' => "Enter Your Message Here"]) !!}
+				{!! $errors->first('message_text', 
+								   '<span class="help-block">:message</span>') !!}
 			</div>
 
 			<div class="form-group">

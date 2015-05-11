@@ -360,7 +360,7 @@ class PrototypeOneController extends Controller {
 
 	
 	/* Functions for case messages */
-	public function submitMessage ($user_id, 
+	public function submitMessage ($user_id, $case_id,
 			SubmitMessageRequest $request) {
 		if (Auth::check()) { // User should be logged in
 			// Need to check that user is authorised to submit messages 
@@ -370,12 +370,14 @@ class PrototypeOneController extends Controller {
 					'home/'.Auth::user()->user_id);
 			}
 			$message = new Message;
-			$message->case_id = $request->get('case_id');
-			$message->user_id = $request->get('user_id');
-			$message->message = $request->get('message');
+			$message->case_id = $case_id;
+			$message->user_id = $user_id;
+			$message->message = $request->get('message_text');
 			$message->save(); // Insert message
+			return redirect()
+				->intended('home/'.$user_id.'/cases/'.$case_id);
 		} else { // User not logged on
-			return redirect()->route('home_no_user_path');
+			return redirect()->intended('home_no_user_path');
 		}
 	}
 
@@ -471,7 +473,8 @@ class PrototypeOneController extends Controller {
 					 ->where("case_id", "=", $case_id)
 					 ->get();
 			return view("prototypeone.cases.viewcase", 
-				compact('research_note', 'user', 'messages', 'case_id'));
+				compact('research_note', 'user', 'messages', 'case_id', 
+					'user_id'));
 		} else { // User not logged on 
 			return redirect()->route('home_no_user_path');
 		}
