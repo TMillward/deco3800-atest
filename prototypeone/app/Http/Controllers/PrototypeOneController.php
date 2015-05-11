@@ -13,7 +13,7 @@ use App\Professional;
 use App\Supplier;
 use App\ResearchCase;
 use App\Message;
-use Illuminate\Auth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Facades\Session;
@@ -63,9 +63,9 @@ class PrototypeOneController extends Controller {
 			'username' => $request->get('username'),
 			'password' => $request->get('password')
 		); // User Input
-		if (\Auth::attempt($userinfo)) {
+		if (Auth::attempt($userinfo)) {
 			// Get user info
-			$user = \Auth::user();
+			$user = Auth::user();
 			return redirect()->intended('home/'.$user->user_id); // Authentication Succeeded
 		} else {
 			// Authentication Failed
@@ -80,7 +80,7 @@ class PrototypeOneController extends Controller {
 	* Function handling logout
 	*/
 	public function logout () {
-		\Auth::logout(); // Log user out
+		Auth::logout(); // Log user out
 		return view('prototypeone.logout');
 	}
 	
@@ -95,8 +95,8 @@ class PrototypeOneController extends Controller {
 	* Function handling home page of a user
 	*/
 	public function homeUser ($user_id) {
-		if (\Auth::check()) { // User should be logged in
-			$user = \Auth::user(); // Get user
+		if (Auth::check()) { // User should be logged in
+			$user = Auth::user(); // Get user
 			if ($user->user_id != $user_id) { // Wrong user id.
 				// Either user is not allowed to access, redirected
 				// to their page or they can look at the page but
@@ -127,8 +127,8 @@ class PrototypeOneController extends Controller {
 	* Function handling viewing a research note
 	*/
 	public function viewNote ($user_id, $research_note_id) {
-		if (\Auth::check()) { // User should be logged in
-			$user = \Auth::user(); // Get user
+		if (Auth::check()) { // User should be logged in
+			$user = Auth::user(); // Get user
 			if ($user->user_id != $user_id) { // Wrong user id.
 				// Either user is not allowed to access, redirected
 				// to their page or they can look at the page but
@@ -149,8 +149,8 @@ class PrototypeOneController extends Controller {
 	* Function handling creating a new note
 	*/
 	public function createNote ($user_id) {
-		if (\Auth::check()) { // User should be logged in
-			$user = \Auth::user(); // Get user
+		if (Auth::check()) { // User should be logged in
+			$user = Auth::user(); // Get user
 			if ($user->user_id != $user_id) { // Wrong user id.
 				// Either user is not allowed to access, redirected
 				// to their page or they can look at the page but
@@ -169,7 +169,7 @@ class PrototypeOneController extends Controller {
 	public function createNoteCheck (CreateNoteRequest $request) {
 		/* Create Database Instance */
 		$note = new ResearchNote; /* Create New Database Instance */
-		$user = \Auth::user(); // Current User
+		$user = Auth::user(); // Current User
 		$note->user_id = $user->user_id; // Set User Id
 		$note->title = $request->get('title');
 		$note->research_text = $request->get('research_text');
@@ -184,8 +184,8 @@ class PrototypeOneController extends Controller {
 	* Function handling editing a research note
 	*/
 	public function editNote ($user_id, $research_note_id) {
-		if (\Auth::check()) { // User should be logged in
-			$user = \Auth::user(); // Get user
+		if (Auth::check()) { // User should be logged in
+			$user = Auth::user(); // Get user
 			if ($user->user_id != $user_id) { // Wrong user id.
 				// Either user is not allowed to access, redirected
 				// to their page or they can look at the page but
@@ -206,8 +206,8 @@ class PrototypeOneController extends Controller {
 	* Function checking the edit of a research note
 	*/
 	public function editNoteCheck (CreateNoteRequest $request, $user_id, $research_note_id) {
-		if (\Auth::check()) { // User should be logged in
-			$user = \Auth::user(); // Get user
+		if (Auth::check()) { // User should be logged in
+			$user = Auth::user(); // Get user
 			if ($user->user_id != $user_id) { // Wrong user id.
 				// Either user is not allowed to access, redirected
 				// to their page or they can look at the page but
@@ -234,8 +234,8 @@ class PrototypeOneController extends Controller {
 	* Function handling deleting a research note
 	*/
 	public function deleteNote ($user_id, $research_note_id) {
-		if (\Auth::check()) { // User should be logged in
-			$user = \Auth::user(); // Get user
+		if (Auth::check()) { // User should be logged in
+			$user = Auth::user(); // Get user
 			if ($user->user_id != $user_id) { // Wrong user id.
 				// Either user is not allowed to access, redirected
 				// to their page or they can look at the page but
@@ -256,8 +256,8 @@ class PrototypeOneController extends Controller {
 	* Function handling actually deleting the research note
 	*/
 	public function deleteNoteConfirm ($user_id, $research_note_id) {
-		if (\Auth::check()) { // User should be logged in
-			$user = \Auth::user(); // Get user
+		if (Auth::check()) { // User should be logged in
+			$user = Auth::user(); // Get user
 			if ($user->user_id != $user_id) { // Wrong user id.
 				// Either user is not allowed to access, redirected
 				// to their page or they can look at the page but
@@ -278,7 +278,7 @@ class PrototypeOneController extends Controller {
 	//PANEL AND CASE FUNCTIONS
 	/*Functions for Research Cases*/	
 	public function submitCase ($user_id, $research_id) {
-		if (\Auth::check()) { // User should be logged in
+		if (Auth::check()) { // User should be logged in
 			$case = new ResearchCase;
 			$case->research_note_id = $research_id;
 			$case->status = false;
@@ -296,7 +296,7 @@ class PrototypeOneController extends Controller {
 	
 	/*Functions for case messages*/
 	public function submitMessage (SubmitMessageRequest $request) {
-		if (\Auth::check()) { // User should be logged in
+		if (Auth::check()) { // User should be logged in
 			//need to check that user is authorised to submit messages (so panel member)
 			$message = new Message;
 			$message->case_id = $request->get('case_id');
@@ -318,7 +318,7 @@ class PrototypeOneController extends Controller {
 	/*functions for viewing cases, both a list of all cases and individual cases*/
 	public function getCases($user_id) {
 	
-		if (\Auth::check()) { // User should be logged in
+		if (Auth::check()) { // User should be logged in
 			//check if they are a professional and whatnot
 			//find all notes that are also cases
 			
@@ -329,7 +329,9 @@ class PrototypeOneController extends Controller {
 							->whereRaw('research_case.research_note_id = research_notes.research_note_id');
 							})->get();
 						  ; // Get cases
-			return view("prototypeone.cases.displaycases", compact('cases'));
+			$case_info = $this->research_cases
+							  ->all();
+			return view("prototypeone.cases.displaycases", compact('cases', 'case_info', 'user_id'));
 			
 		} else { // user not logged on
 			return redirect()->route('home_no_user_path');
@@ -337,7 +339,7 @@ class PrototypeOneController extends Controller {
 	}
 	//gets individual case and the case's messages and returns a view that displays them
 	public function getCasePage ($user_id, $case_id) {
-		
+		return $case_id;
 	}
 	
 	

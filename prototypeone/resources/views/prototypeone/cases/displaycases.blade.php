@@ -2,11 +2,14 @@
 @section("title", "Cases")
 
 @section("content")
-	@foreach($cases as $case)<!-- are actually notes for acces to users and titles-->
-		<div>
+	@for($i = 0; $i < count($cases); $i++)<!-- are actually notes for acces to users and titles-->
+		<div class="case link">
 			<!--cases display-->
-			<p> {{$case->user_id}}</p>
-			<p> {{$case->title}}</p>
+			<p> {{$cases[$i]->user_id}}</p>
+			<p> {{$cases[$i]->title}}</p>
+			{!! HTML::linkRoute('get_case_page', 'view case', [$user_id, $case_info[$i]->case_id]) !!}	
 		</div>
-	@endforeach
+	
+
+	@endfor
 @stop

@@ -23,6 +23,7 @@ Route::get("home/{user_id}/create_note", [ 'as' => 'create_note_path',
 Route::post("home/{user_id}/create_note/check", [ 'as' => 'create_note_check_path', 
 												  'uses' => "PrototypeOneController@createNoteCheck"]);
 Route::get("/home/{user_id}/cases", ['as' => 'view_cases', 'uses' => "PrototypeOneController@getCases"]);
+Route::get("/home/{user_id}/cases/{case_id}", ['as' => 'get_case_page', 'uses' => "PrototypeOneController@getCasePage"]);
 Route::get("home/{user_id}/{research_note_id}", [ 'as' => 'view_note_path', 		
 												  'uses' => "PrototypeOneController@viewNote"]);
 Route::get("home/{user_id}/{research_note_id}/edit", [ 'as' => 'edit_path',				
@@ -53,7 +54,7 @@ Route::post("newAccount", [ 'as' => 'newaccount_path',
 Route::post("/home/{user_id}/{research_note_id}/submitCase", [ 'as' => 'submit_case', 
 								'uses' => "PrototypeOneController@submitCase"]);							
 
-Route::get("cases/{case_id}", ['as' => 'get_case_page', 'uses' => "PrototypeOneController@getCasePage"]);
+
 //for messages
 Route::post("cases/sendMessage", ['as' => 'submit_message', 'uses' => "PrototypeOneController@submitMessage"]);
 
