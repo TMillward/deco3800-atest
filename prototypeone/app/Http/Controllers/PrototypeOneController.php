@@ -277,25 +277,64 @@ class PrototypeOneController extends Controller {
 	}
 	//PANEL AND CASE FUNCTIONS
 	/*Functions for Research Cases*/	
-	public function submitCase ($user_id, $research_id) {}
+	public function submitCase ($user_id, $research_id) {
+		if (\Auth::check()) { // User should be logged in
+			$case = new ResearchCase;
+			$case->research_note_id = $request->get('research_id');
+			$case->status = false;
+			$case->save();
+		} else { // user not logged on
+			return redirect()->route('home_no_user_path');
+		}
+	}
 	public function submitCaseConfirm ($user_id) {
 		//dont need to check wether they said yes 
 		//or not as yes calls this and no just goes back to the page	
 	}
 	public function changeCaseStatus ($user_id, $case_id, $status){}
+
 	
 	/*Functions for case messages*/
-	public function submitMessage ($case_id, $user_id, $message) {}
+	public function submitMessage (SubmitMessageRequest $request) {
+		if (\Auth::check()) { // User should be logged in
+			//need to check that user is authorised to submit messages (so panel member)
+			$message = new Message;
+			$message->case_id = $request->get('case_id');
+			$message->user_id = $request->get('user_id');
+			$message->message = $request->get('message');
+			$message->save(); //Insert message
+		} else { // user not logged on
+			return redirect()->route('home_no_user_path');
+		}
+	}
 	public function editMessage ($case_id, $user_id, $new_message){}
 	public function deleteMessage($user_id, $case_id) {
 		//check user is either the submitting seeker or a panel member
 	}
-	public function deleteMessageConfirm($user_id, $case_id) {}
+	public function deleteMessageConfirm($user_id, $message_id) {
+		
+	}
 	// display all messages attaced to given case
 	public function getMessages ( $case_id, $user_id) {}
 	
 	/*functions for viewing cases, both a list of all cases and individual cases*/
-	public function getCases($user_id) {}
+	public function getCases($user_id) {
+		if (\Auth::check()) { // User should be logged in
+			//check if they are a professional and whatnot
+			//find all notes that are also cases
+			$cases = $this->research_notes
+						  ->whereExists(function ($query) {
+							$query->select(*)
+							->from($this->research_cases)
+							->whereRaw('$this->research_cases.research_note_id = $this->research_notes.research_note_id');
+							})->get();
+						  ; // Get cases
+			return view("prototypeone.cases.displaycases", compact('cases'));
+			
+		} else { // user not logged on
+			return redirect()->route('home_no_user_path');
+		}
+	}
 	//gets individual case and the case's messages and returns a view that displays them
 	public function getCasePage ($user_id, $case_id) {}
 	

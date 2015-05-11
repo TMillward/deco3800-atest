@@ -48,5 +48,14 @@ Route::get("register/supplier", [ 'as' => 'supplier_register',
 								'uses' => 'PrototypeOneController@supplierRegister']);			
 Route::post("newAccount", [ 'as' => 'newaccount_path', 		
 						    'uses' => "PrototypeOneController@newAccount"]);
+//for cases 
+Route::post("/home/{user_id}/{research_note_id}/submitCase", [ 'as' => 'submit_case', 
+								'uses' => "PrototypeOneController@submitCase"]);							
+Route::get("cases", ['as' => 'view_cases', 'uses' => "PrototypeOneController@getCases"]);
+Route::get("cases/{case_id}", ['as' => 'get_case_page', 'uses' => "PrototypeOneController@getCasePage"]);
+//for messages
+Route::post("cases/sendMessage", ['as' => 'submit_message', 'uses' => "PrototypeOneController@submitMessage"]);
+
+
 
 Route::get("pizza", "PrototypeOneController@pizza");
