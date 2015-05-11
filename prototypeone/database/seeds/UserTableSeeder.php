@@ -14,6 +14,7 @@ class UserTableSeeder extends Seeder {
 			'usertype'			=> 'Seeker',
 			'professional_id'	=> 1,
 			'supplier_id'		=> 1,
+			'expert_user_id'	=> 1,
 			'created_at'		=> new DateTime(),
 			'updated_at'		=> new DateTime()
 		));
@@ -25,6 +26,7 @@ class UserTableSeeder extends Seeder {
 			'usertype'			=> 'Professional',
 			'professional_id'	=> 2,
 			'supplier_id'		=> 1,
+			'expert_user_id'	=> 1,
 			'created_at'		=> new DateTime(),
 			'updated_at'		=> new DateTime()
 		));
@@ -35,6 +37,18 @@ class UserTableSeeder extends Seeder {
 			'usertype'			=> 'Supplier',
 			'professional_id'	=> 1,
 			'supplier_id'		=> 2,
+			'expert_user_id'	=> 1,
+			'created_at'		=> new DateTime(),
+			'updated_at'		=> new DateTime()
+		));
+		User::create(array(
+			'username'			=> 'testname4',
+			'name'				=> 'Number Two',
+			'password'			=> Hash::make('1'),
+			'usertype'			=> 'Expert User',
+			'professional_id' 	=> 1,
+			'supplier_id'		=> 1,
+			'expert_user_id'	=> 2,
 			'created_at'		=> new DateTime(),
 			'updated_at'		=> new DateTime()
 		));

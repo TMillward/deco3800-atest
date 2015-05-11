@@ -13,6 +13,7 @@ use App\Professional;
 use App\Supplier;
 use App\ResearchCase;
 use App\Message;
+use App\ExpertUser;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\MessageBag;
@@ -26,17 +27,20 @@ class PrototypeOneController extends Controller {
 	private $suppliers; // Eloquent model of suppliers table
 	private $research_cases;// Eloquent model of research cases table
 	private $messages; // Eloquent model of case messages
+	private $expert_users; // Eloquent model of expert users
 	
 	public function __construct (User $users, ResearchNote $research_notes, 
 								Professional $professionals, 
 								Supplier $suppliers, Message $messages,
-								ResearchCase $cases) {
+								ResearchCase $cases, 
+								ExpertUser $expert_users) {
 		$this->users = $users;
 		$this->research_notes = $research_notes;
 		$this->professionals = $professionals;
 		$this->suppliers = $suppliers;
 		$this->research_cases = $cases;
 		$this->messages = $messages;
+		$this->expert_users = $expert_users;
 	}
 
 	/*
@@ -102,9 +106,8 @@ class PrototypeOneController extends Controller {
 				// not do anything
 				return redirect()->intended('home/'.$user->user_id);
 			}
-			$extrainfo; // Extra info for non-standard user
-			if (!strcmp($user->usertype, 'Seeker')) { // Simple user info
-				$extrainfo = null;
+			if (!strcmp($user->usertype, 'Seeker')) { 
+				// Simple user info
 				$research_notes = 
 					$this->research_notes
 					     ->where('user_id', '=', $user->user_id)
@@ -125,9 +128,14 @@ class PrototypeOneController extends Controller {
 						 ->find($user->supplier_id);
 				return view('prototypeone.home', 
 					compact('user', 'extrainfo'));
+			} else if (!strcmp($user->usertype, "Expert User")) {
+				// Expert User info
+				$extrainfo =
+					$this->expert_users
+						 ->find($user->expert_user_id);
+				return view ('prototypeone.home', 
+					compact('user', 'extrainfo'));
 			}
-			return view('prototypeone.home', 
-				compact('user', 'research_notes'));
 		} else {
 			return redirect()->route('home_no_user_path');
 		}
@@ -298,7 +306,9 @@ class PrototypeOneController extends Controller {
 	}
 	//PANEL AND CASE FUNCTIONS
 	/*Functions for Research Cases*/	
-	public function submitCase ($user_id, $research_id) {}
+	public function submitCase ($user_id, $research_id) {
+		return "Case submitted";
+	}
 	public function submitCaseConfirm ($user_id) {
 		//dont need to check wether they said yes 
 		//or not as yes calls this and no just goes back to the page	
@@ -345,6 +355,7 @@ class PrototypeOneController extends Controller {
 		if (!strcmp("Seeker", $request->get('usertype'))) { // AT Seeker 
 			$user->professional_id = 1;
 			$user->supplier_id = 1;
+			$user->expert_user_id = 1;
 		} else if (!strcmp("Professional", $request->get('usertype'))) { 
 			// AT Professional
 			// Create and save new professional object
@@ -357,6 +368,7 @@ class PrototypeOneController extends Controller {
 			// Set professional id and supplier id of user model
 			$user->professional_id = $professional->professional_id;
 			$user->supplier_id = 1;
+			$user->expert_user_id = 1;
 		} else if (!strcmp("Supplier", $request->get('usertype'))) {
 			// Create and save new supplier object
 			$supplier = new Supplier;
@@ -374,6 +386,15 @@ class PrototypeOneController extends Controller {
 			// Set supplier id and seeker id of user model
 			$user->professional_id = 1;
 			$user->supplier_id = $supplier->supplier_id;
+			$user->expert_user_id = 1;
+		} else if (!strcmp("Expert User", $request->get('usertype'))) {
+			// Create and save a new Expert User object
+			$expert_user = new ExpertUser;
+			$expert_user->qualifications = $request->get('qualifications');
+			$expert_user->save();
+			$user->professional_id = 1;
+			$user->supplier_id = 1;
+			$user->expert_user_id = $expert_user->expert_user_id;
 		}
 		$user->save(); // Finish creating User
 		$extrainfo;
@@ -387,28 +408,36 @@ class PrototypeOneController extends Controller {
 		} else if (!strcmp($user->usertype, 'Supplier')) { 
 			// Supplier info
 			$extrainfo = $this->suppliers->find($user->supplier_id);
+		} else if (!strcmp($user->usertype, 'Expert User')) {
+			// Expert User info
+			$extrainfo = $this->expert_users->find($user->expert_user_id);
 		}
 		return view("prototypeone.accountapproved", 
 			compact('user', 'extrainfo'));
 	}
 
 	/**
-	* Functions handling three different login forms
+	* Functions handling three different register forms
 	*/
 	
-	/* AT Seeker login form */
+	/* AT Seeker register form */
 	public function seekerRegister () {
 		return view("prototypeone.seekerRegister");
 	}
 	
-	/* AT Professional login form */
-	public function professionalRegister() {
+	/* AT Professional register form */
+	public function professionalRegister () {
 		return view("prototypeone.professionalRegister");
 	}
 	
-	/* AT Supplier login form */
-	public function supplierRegister() {
+	/* AT Supplier register form */
+	public function supplierRegister () {
 		return view("prototypeone.supplierRegister");
+	}
+
+	/* AT Expert User register form */
+	public function expertUserRegister () {
+		return view("prototypeone.expertUserRegister");
 	}
 	
 	/* test function */

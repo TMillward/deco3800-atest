@@ -8,6 +8,7 @@
 	{!! HTML::linkRoute('seeker_register', 'AT Seeker') !!} <br>
 	{!! HTML::linkRoute('professional_register', 'AT Professional') !!} <br>
 	{!! HTML::linkRoute('supplier_register', 'AT Supplier') !!} <br>
+	{!! HTML::linkRoute('expert_user_register', 'AT Expert User') !!} <br>
 	
 	<br>
 	<br>
