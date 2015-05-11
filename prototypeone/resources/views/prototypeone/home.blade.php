@@ -18,7 +18,12 @@
 				<p><strong>You are an Expert User!</strong></p>
 			@endif
 			<p><strong>Qualifications: </strong> {{ $extrainfo->qualifications}} </p>
-			<div>{!! HTML::linkRoute('view_cases', 'view cases', [$user->user_id]) !!}</div>
+			<p>
+				<strong>Research Cases: </strong> 
+				{!! HTML::linkRoute('view_cases', 
+					'View All Cases', 
+					[$user->user_id]) !!}
+			</p>
 		@elseif ($user->usertype === "Supplier")
 			<p><strong>Street Number: </strong> {{ $extrainfo->street_number}} </p>
 			<p><strong>Street Name: </strong> {{ $extrainfo->street_name}} </p>

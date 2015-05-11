@@ -2,11 +2,21 @@
 @section("title", "Cases")
 
 @section("content")
-	@foreach($cases as $case)<!-- are actually notes for acces to users and titles-->
-		<div>
-			<!--cases display-->
-			<p> {{$case->user_id}}</p>
-			<p> {{$case->title}}</p>
-		</div>
-	@endforeach
+	<h1> Currently Active Research Cases </h1>
+	<p> 
+		Below are the cases currently pending your review. Please 
+		click the title of any of the cases below to start or 
+		continue your review
+	</p>
+	@for ($i = 0; $i < $numberOfCases; ++$i)
+		<h2>{{ $cases[$i]->title }}</h2>
+		<p>
+			{!! HTML::linkRoute(
+				'get_case_page', 
+				'Click here to go to the review page for this case', 
+				[$user_id, $caseInfo[$i]->case_id]
+				)
+			!!}
+		</p>
+	@endfor
 @stop
