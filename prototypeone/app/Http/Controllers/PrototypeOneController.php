@@ -178,7 +178,7 @@ class PrototypeOneController extends Controller {
 	/**
 	* Function validating and authenticating a new note
 	*/
-	public function createNoteCheck (CreateNoteRequest $request) {
+	public function createNoteCheck (CreateNoteRequest $request, $user_id) {
 		/* Create Database Instance */
 		$note = new ResearchNote; /* Create New Database Instance */
 		$user = Auth::user(); // Current User
