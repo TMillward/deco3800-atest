@@ -3,7 +3,7 @@
 @section("title", "Case Notes")
 @section("content")
 	<p>{{$case_notes->title}}</p></br>
-	<p>{{$user_name}}</p></br>
+	<p>{{$user_id}}</p></br>
 	<p>{{$case_notes->research_text}}</p>
 	
 @stop

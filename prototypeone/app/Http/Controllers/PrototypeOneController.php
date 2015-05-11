@@ -330,7 +330,7 @@ class PrototypeOneController extends Controller {
 							})->get();
 						  ; // Get cases
 			$case_info = $this->research_cases
-							  ->all();
+							  ->get();
 			return view("prototypeone.cases.displaycases", compact('cases', 'case_info', 'user_id'));
 			
 		} else { // user not logged on
@@ -339,7 +339,22 @@ class PrototypeOneController extends Controller {
 	}
 	//gets individual case and the case's messages and returns a view that displays them
 	public function getCasePage ($user_id, $case_id) {
-		return $case_id;
+		if (Auth::check()) { // User should be logged in
+			$case_notes = $this->research_notes
+							   ->find($this->research_cases
+									->find($case_id)
+									->research_note_id
+								);
+							   /*'Select * from research_note, research_case 
+											where research_case.case_id = $case_id 
+												AND research_note.research_note_id = research_case.research_note_id'*/
+			$messages = $this->messages
+							 ->where( 'case_id', '=', $case_id)
+							 ->get();
+			return view("prototypeone.cases.viewcase", compact('case_notes','user_id' ,'messages'));
+		} else { // user not logged on
+			return redirect()->route('home_no_user_path');
+		}
 	}
 	
 	
