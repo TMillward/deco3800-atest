@@ -325,7 +325,7 @@ class PrototypeOneController extends Controller {
 	}
 	/*	PANEL AND CASE FUNCTIONS */
 	/* Functions for Research Cases */	
-	public function submitCase ($user_id, $research_id) {
+	public function submitCase ($user_id, $research_note_id) {
 		if (Auth::check()) { // User should be logged in
 			if (Auth::user()->user_id != $user_id) { // Wrong user
 				return redirect()->intended(
@@ -333,26 +333,20 @@ class PrototypeOneController extends Controller {
 			}
 			/* Create research case */
 			$case = new ResearchCase;
-			$case->research_note_id = $research_id;
+			$case->research_note_id = $research_note_id;
 			$case->status = false;
 			$case->save();
+			// Get research note info
+			$research_note_info = 
+				$this->research_notes
+					 ->find($case->research_note_id);
+			return view("prototypeone.cases.submitcaseconfirm", 
+				compact('user_id', 'research_note_info'));
 		} else { // User not logged on
 			return redirect()->route('home_no_user_path');
 		}
 	}
-	public function submitCaseConfirm ($user_id) {
-		// Don't need to check wether they said yes 
-		// or not as yes calls this and no just goes back to the page
-		if (Auth::check()) { // User should be logged in
-			if (Auth::user()->user_id != $user_id) { // Wrong user
-				return redirect()->intended(
-					'home/'.Auth::user()->user_id);
-			}
-			// Code to be run
-		} else { // User not logged on
-			return redirect()->route('home_no_user_path');
-		}
-	}
+	
 	public function changeCaseStatus ($user_id, $case_id, $status){
 		if (Auth::check()) { // User should be logged in 
 			if (Auth::user()->user_id != $user_id) { // Wrong user
@@ -430,7 +424,7 @@ class PrototypeOneController extends Controller {
 		if (Auth::check()) { // User should be logged in
 			// Check if they are a professional and whatnot
 			// Find all notes that are also cases
-			if (Auth::user()->user_id != $user_id) {
+			if (Auth::user()->professional_id == 1) {
 				return redirect()->intended(
 					'home/'.Auth::user()->user_id);
 			}
@@ -474,9 +468,10 @@ class PrototypeOneController extends Controller {
 					$userInfo = $this->users
 									 ->where(
 									 	"professional_id", "=", 
-									 	$panel->professional_id
+									 	$panel[$i]->professional_id
 									 )
-									 ->get();
+									 ->get()
+									 ->first();
 					if ($userInfo->user_id == Auth::user()->user_id) {
 						$valid = true;
 						break;
