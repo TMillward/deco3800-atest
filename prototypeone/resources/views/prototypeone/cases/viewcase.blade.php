@@ -15,6 +15,15 @@
 		<br>
 		{{ $research_note->research_text }} 
 	</p>
+<<<<<<< HEAD
+=======
+	<p>
+		{!! HTML::linkRoute('view_cases', 
+			'Click here to link back to the list of cases', 
+			[$user_id]) 
+		!!}
+	</p>
+>>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
 @stop
 
 @section("message_feed")
@@ -37,14 +46,23 @@
 		<h2>Send a message below</h2>
 		{!! Form::open(['url' => route('send_message', 
 			[$user_id, $case_id])]) !!}
+<<<<<<< HEAD
 			<div class="form-group {{$errors->has('message_text') ? 'has-error' : '' }}">
 				
+=======
+			<div class="form-group 
+				{{ $errors->has('message_text') ? 'has-error' : '' }}">
+>>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
 				{!! Form::label('message_text', 'Message Text') !!}
 				{!! Form::textarea('message_text', null, 
 					['class' => 'form-control', 
 					 'placeholder' => "Enter Your Message Here"]) !!}
 				{!! $errors->first('message_text', 
+<<<<<<< HEAD
 									'<span class="help-block">:message</span>') !!}
+=======
+								   '<span class="help-block">:message</span>') !!}
+>>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
 			</div>
 
 			<div class="form-group">

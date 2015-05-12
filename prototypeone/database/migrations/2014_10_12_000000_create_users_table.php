@@ -32,6 +32,11 @@ class CreateUsersTable extends Migration {
 			$table->foreign('supplier_id')
 				  ->references('supplier_id')->on('suppliers')
 				  ->onDelete('cascade');
+			$table->integer('expert_user_id')
+				  ->unsigned();
+			$table->foreign('expert_user_id')
+				  ->references('expert_user_id')->on('expert_users')
+				  ->onDelete('cascade');
 			$table->rememberToken();
 			$table->timestamps();
 		});

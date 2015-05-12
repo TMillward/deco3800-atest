@@ -13,14 +13,40 @@
 		</p> <br><br>
 		<p><strong>Created At: </strong> {{ $note->created_at }} </p>
 		<p><strong>Updated At: </strong> {{ $note->updated_at }} </p>
-		{!! Form::open(['url' => route('submit_case', [$user->user_id, $note->research_note_id])]) !!}
-			{!! Form::label('submitButton', 'Click here to submit this note for panel review: ') !!}
-			{!! Form::submit('Submit', ['class' => 'btn btn-primary', 'name' => 'submitButton']) !!}
-		{!! Form::close() !!}
+		@if ($isCase === null)
+			<p>
+				<strong>Review Status: </strong>
+				This note has not been submitted yet. 
+				Click the button below to submit it 
+				for review by our panel: 
+			</p>
+			{!! Form::open(['url' => route('submit_case', 
+									[$user->user_id, 
+									$note->research_note_id])]) !!}
+				{!! Form::submit('Submit', 
+				['class' => 'btn btn-primary', 
+				 'name' => 'submitButton']) !!}
+			{!! Form::close() !!}
+		@else
+			<p>
+				<strong>Review Status: </strong> 
+				{!! HTML::linkRoute('get_case_page', 
+				'This research note is pending review. Click here 
+				to look at its progress', 
+				[$user->user_id, $isCase->case_id]) !!} 
+			</p>
+		@endif
 	</div>
+
+	<br>
+	<br>
 	
 	<div class="container">
-		<p>{!! HTML::linkRoute('home_user_path', 'Return to list of notes', [$user->user_id]) !!}</p>
+		{!! Form::open(['url' => route('home_user_path', [$user->user_id]), 
+						'method' => 'get']) !!}
+			{!! Form::submit('Return to list of notes', 
+							['class' => 'btn btn-primary']) !!}
+		{!! Form::close() !!}
 	</div>
 @stop
 

@@ -13,6 +13,10 @@ use App\Professional;
 use App\Supplier;
 use App\ResearchCase;
 use App\Message;
+<<<<<<< HEAD
+=======
+use App\ExpertUser;
+>>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\MessageBag;
@@ -26,17 +30,20 @@ class PrototypeOneController extends Controller {
 	private $suppliers; // Eloquent model of suppliers table
 	private $research_cases;// Eloquent model of research cases table
 	private $messages; // Eloquent model of case messages
+	private $expert_users; // Eloquent model of expert users
 	
 	public function __construct (User $users, ResearchNote $research_notes, 
 								Professional $professionals, 
 								Supplier $suppliers, Message $messages,
-								ResearchCase $cases) {
+								ResearchCase $cases, 
+								ExpertUser $expert_users) {
 		$this->users = $users;
 		$this->research_notes = $research_notes;
 		$this->professionals = $professionals;
 		$this->suppliers = $suppliers;
 		$this->research_cases = $cases;
 		$this->messages = $messages;
+		$this->expert_users = $expert_users;
 	}
 
 	/*
@@ -44,7 +51,6 @@ class PrototypeOneController extends Controller {
 	*/
 	public function index () {
 		return view("prototypeone.index");
-		//return "Welcome to Sprint Zero Prototype";
 	}
 	
 	/**
@@ -52,7 +58,6 @@ class PrototypeOneController extends Controller {
 	*/
 	public function about () {
 		return view("prototypeone.about");
-		//return "This is the prototype for the Sprint Zero presentation";
 	}
 	
 	/**
@@ -66,11 +71,17 @@ class PrototypeOneController extends Controller {
 		if (Auth::attempt($userinfo)) {
 			// Get user info
 			$user = Auth::user();
+<<<<<<< HEAD
 			return redirect()->intended('home/'.$user->user_id); // Authentication Succeeded
+=======
+			// Authentication Succeeded
+			return redirect()->intended('home/'.$user->user_id); 
+>>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
 		} else {
 			// Authentication Failed
 			// Create a message bag containing all the errors
-			$autherrors = new MessageBag(['loginFailed' => ['Username and/or password invalid']]);
+			$autherrors = new MessageBag(['loginFailed' 
+				=> ['Username and/or password invalid']]);
 			return redirect()->back()
 							 ->withErrors($autherrors);
 		}
@@ -103,21 +114,36 @@ class PrototypeOneController extends Controller {
 				// not do anything
 				return redirect()->intended('home/'.$user->user_id);
 			}
-			$extrainfo; // Extra info for non-standard user
-			if (!strcmp($user->usertype, 'Seeker')) { // Simple user info
-				$extrainfo = null;
-				$research_notes = $this->research_notes
-								   ->where('user_id', '=', $user->user_id)
-								   ->get(); // Get research notes
-				return view('prototypeone.home', compact('user', 'research_notes'));
-			} else if (!strcmp($user->usertype, 'Professional')) { // Professional info
-				$extrainfo = $this->professionals->find($user->professional_id);
-				return view('prototypeone.home', compact('user', 'extrainfo'));
-			} else if (!strcmp($user->usertype, 'Supplier')) { // Supplier info
-				$extrainfo = $this->suppliers->find($user->supplier_id);
-				return view('prototypeone.home', compact('user', 'extrainfo'));
+			if (!strcmp($user->usertype, 'Seeker')) { 
+				// Simple user info
+				$research_notes = 
+					$this->research_notes
+					     ->where('user_id', '=', $user->user_id)
+						 ->get(); // Get research notes
+				return view('prototypeone.home', 
+					compact('user', 'research_notes'));
+			} else if (!strcmp($user->usertype, 'Professional')) { 
+				// Professional info
+				$extrainfo = 
+					$this->professionals
+						 ->find($user->professional_id);
+				return view('prototypeone.home', 
+					compact('user', 'extrainfo'));
+			} else if (!strcmp($user->usertype, 'Supplier')) { 
+				// Supplier info
+				$extrainfo = 
+					$this->suppliers
+						 ->find($user->supplier_id);
+				return view('prototypeone.home', 
+					compact('user', 'extrainfo'));
+			} else if (!strcmp($user->usertype, "Expert User")) {
+				// Expert User info
+				$extrainfo =
+					$this->expert_users
+						 ->find($user->expert_user_id);
+				return view ('prototypeone.home', 
+					compact('user', 'extrainfo'));
 			}
-			return view('prototypeone.home', compact('user', 'research_notes'));
 		} else {
 			return redirect()->route('home_no_user_path');
 		}
@@ -136,10 +162,17 @@ class PrototypeOneController extends Controller {
 				return redirect()->intended('home/'.$user->user_id);
 			}
 			$note = $this->research_notes
-						 ->where('research_note_id', '=', $research_note_id)
+						 ->where('research_note_id', '=', 
+						 	$research_note_id)
 						 ->get()
 						 ->first(); // Get note
-			return view("prototypeone.viewnote", compact('note'), compact('user'));
+			$isCase = $this->research_cases
+						   ->where('research_note_id', '=', 
+						   		$research_note_id)
+						   ->get()
+						   ->first();
+			return view("prototypeone.viewnote", 
+				compact('note', 'user', 'isCase'));
 		} else {
 			return redirect()->route('home_no_user_path');
 		}
@@ -166,6 +199,7 @@ class PrototypeOneController extends Controller {
 	/**
 	* Function validating and authenticating a new note
 	*/
+<<<<<<< HEAD
 	public function createNoteCheck (CreateNoteRequest $request) {
 		/* Create Database Instance */
 		$note = new ResearchNote; /* Create New Database Instance */
@@ -178,6 +212,32 @@ class PrototypeOneController extends Controller {
 		$note->slug = $slugcontainer;
 		$note->save(); // Finish creating Note
 		return view("prototypeone.newnoteapproved", compact('user'), compact('note'));
+=======
+	public function createNoteCheck (CreateNoteRequest $request, 
+			$user_id) {
+		if (Auth::check()) { // User is logged in.
+			if (Auth::user()->user_id != $user_id) { // Wrong user id
+				return redirect()->intended(
+					'home/'.Auth::user()->user_id);
+			}
+			// Correct user. Continue
+			/* Insert Database Record */
+			$note = new ResearchNote; // Create New Database Instance
+			$user = Auth::user(); // Current User
+			$note->user_id = $user->user_id; // Set User Id
+			$note->title = $request->get('title');
+			$note->research_text = $request->get('research_text');
+			/* Set Slug - May not be used */
+			$slugcontainer = str_slug($request->get('title'), "-");
+			$note->slug = $slugcontainer;
+			$note->save(); // Finish creating Note
+			return view("prototypeone.newnoteapproved", 
+				compact('user', 'note'));
+		} else { // No user logged in
+			return redirect()->route("home_no_user_path");
+		}
+		
+>>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
 	}
 	
 	/**
@@ -190,13 +250,15 @@ class PrototypeOneController extends Controller {
 				// Either user is not allowed to access, redirected
 				// to their page or they can look at the page but
 				// not do anything
-				return redirect()->intended('home/'.$user->user_id);
+				return redirect()->intended(
+					'home/'.Auth::user()->user_id);
 			}
 			$note = $this->research_notes
-						 ->where('research_note_id', '=', $research_note_id)
+						 ->where('research_note_id', '=', 
+						 	$research_note_id)
 						 ->get()
 						 ->first(); // Get note
-			return view("prototypeone.editnote", compact('user'), compact('note'));
+			return view("prototypeone.editnote", compact('user', 'note'));
 		} else {
 			return redirect()->route('home_no_user_path');
 		}
@@ -205,14 +267,20 @@ class PrototypeOneController extends Controller {
 	/**
 	* Function checking the edit of a research note
 	*/
+<<<<<<< HEAD
 	public function editNoteCheck (CreateNoteRequest $request, $user_id, $research_note_id) {
+=======
+	public function editNoteCheck (CreateNoteRequest $request, $user_id, 
+			$research_note_id) {
+>>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
 		if (Auth::check()) { // User should be logged in
 			$user = Auth::user(); // Get user
 			if ($user->user_id != $user_id) { // Wrong user id.
 				// Either user is not allowed to access, redirected
 				// to their page or they can look at the page but
 				// not do anything
-				return redirect()->intended('home/'.$user->user_id);
+				return redirect()->intended(
+					'home/'.Auth::user()->user_id);
 			}
 			$note = $this->research_notes
 						 ->whereResearch_note_id($research_note_id)
@@ -224,7 +292,8 @@ class PrototypeOneController extends Controller {
 			$slugcontainer = str_slug($request->get('title'), "-");
 			$note->slug = $slugcontainer;
 			$note->save(); // Finish creating Note
-			return view("prototypeone.editnoteapproved", compact('user'), compact('note'));
+			return view("prototypeone.editnoteapproved", 
+				compact('user', 'note'));
 		} else {
 			return redirect()->route('home_no_user_path');
 		}
@@ -240,13 +309,16 @@ class PrototypeOneController extends Controller {
 				// Either user is not allowed to access, redirected
 				// to their page or they can look at the page but
 				// not do anything
-				return redirect()->intended('home/'.$user->user_id);
+				return redirect()->intended(
+					'home/'.Auth::user()->user_id);
 			}
 			$note = $this->research_notes
-						 ->where('research_note_id', '=', $research_note_id)
+						 ->where('research_note_id', '=', 
+						 	$research_note_id)
 						 ->get()
 						 ->first(); // Get note
-			return view("prototypeone.deletenoteconfirm", compact('user'), compact('note'));
+			return view("prototypeone.deletenoteconfirm", 
+				compact('user', 'note'));
 		} else {
 			return redirect()->route('home_no_user_path');
 		}
@@ -262,10 +334,12 @@ class PrototypeOneController extends Controller {
 				// Either user is not allowed to access, redirected
 				// to their page or they can look at the page but
 				// not do anything
-				return redirect()->intended('home/'.$user->user_id);
+				return redirect()->intended(
+					'home/'.Auth::user()->user_id);
 			}
 			$note = $this->research_notes
-						 ->where('research_note_id', '=', $research_note_id)
+						 ->where('research_note_id', '=', 
+						 	$research_note_id)
 						 ->get()
 						 ->first(); // Get note
 			// Delete the note
@@ -275,29 +349,56 @@ class PrototypeOneController extends Controller {
 			return redirect()->route('home_no_user_path');
 		}
 	}
+<<<<<<< HEAD
 	//PANEL AND CASE FUNCTIONS
 	/*Functions for Research Cases*/	
 	public function submitCase ($user_id, $research_id) {
 		if (Auth::check()) { // User should be logged in
+=======
+	/*	PANEL AND CASE FUNCTIONS */
+	/* Functions for Research Cases */	
+	public function submitCase ($user_id, $research_note_id) {
+		if (Auth::check()) { // User should be logged in
+			if (Auth::user()->user_id != $user_id) { // Wrong user
+				return redirect()->intended(
+					'home/'.Auth::user()->user_id);
+			}
+			/* Create research case */
+>>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
 			$case = new ResearchCase;
-			$case->research_note_id = $research_id;
+			$case->research_note_id = $research_note_id;
 			$case->status = false;
 			$case->save();
-		} else { // user not logged on
+			// Get research note info
+			$research_note_info = 
+				$this->research_notes
+					 ->find($case->research_note_id);
+			return view("prototypeone.cases.submitcaseconfirm", 
+				compact('user_id', 'research_note_info'));
+		} else { // User not logged on
 			return redirect()->route('home_no_user_path');
 		}
 	}
-	public function submitCaseConfirm ($user_id) {
-		//dont need to check wether they said yes 
-		//or not as yes calls this and no just goes back to the page	
+	
+	public function changeCaseStatus ($user_id, $case_id, $status){
+		if (Auth::check()) { // User should be logged in 
+			if (Auth::user()->user_id != $user_id) { // Wrong user
+				return redirect()->intended(
+					'home/'.Auth::user()->user_id);
+			}
+		} else {
+			return redirect()->route('home_no_user_path');
+		}
 	}
-	public function changeCaseStatus ($user_id, $case_id, $status){}
 
 	
 	/* Functions for case messages */
 	public function submitMessage ($user_id, $case_id,
 			SubmitMessageRequest $request) {
+<<<<<<< HEAD
 		
+=======
+>>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
 		if (Auth::check()) { // User should be logged in
 			// Need to check that user is authorised to submit messages 
 			// (so panel member)
@@ -305,56 +406,154 @@ class PrototypeOneController extends Controller {
 				return redirect()->intended(
 					'home/'.Auth::user()->user_id);
 			}
+<<<<<<< HEAD
 			
+=======
+>>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
 			$message = new Message;
 			$message->case_id = $case_id;
 			$message->user_id = $user_id;
 			$message->message = $request->get('message_text');
 			$message->save(); // Insert message
+<<<<<<< HEAD
 			return redirect()->intended('home/' . $user_id . '/cases/'. $case_id );
 		} else { // User not logged on
-			return redirect()->route('home_no_user_path');
+=======
+			return redirect()
+				->intended('home/'.$user_id.'/cases/'.$case_id);
+		} else { // User not logged on
+			return redirect()->intended('home_no_user_path');
 		}
 	}
-	public function editMessage ($case_id, $user_id, $new_message){}
-	public function deleteMessage($user_id, $case_id) {
-		//check user is either the submitting seeker or a panel member
-	}
-	public function deleteMessageConfirm($user_id, $message_id) {
-		
-	}
-	
-	/*functions for viewing cases, both a list of all cases and individual cases*/
-	public function getCases($user_id) {
-	
+
+	public function editMessage ($case_id, $user_id, $new_message){
 		if (Auth::check()) { // User should be logged in
-			//check if they are a professional and whatnot
-			//find all notes that are also cases
-			
-			$cases = $this->research_notes
-						  ->whereExists(function ($query) {
-							$query->select('*')
-							->from('research_case')
-							->whereRaw('research_case.research_note_id = research_notes.research_note_id');
-							})->get();
-						  ; // Get cases
-			$case_info = $this->research_cases
-							  ->get();
-			return view("prototypeone.cases.displaycases", compact('cases', 'case_info', 'user_id'));
-			
-		} else { // user not logged on
+			if (Auth::user()->user_id != $user_id) { // Wrong user
+				return redirect()->intended(
+					'home/'.Auth::user()->user_id);
+			}
+			// Code 
+		} else { // User not logged on 
+>>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
 			return redirect()->route('home_no_user_path');
 		}
 	}
-/* Gets individual case and the case's 
-		messages and returns a view that displays them */
-	public function getCasePage ($user_id, $case_id) {
+	public function deleteMessage($user_id, $case_id) {
 		// Check user is either the submitting seeker or a panel member
 		if (Auth::check()) { // User should be logged in 
 			if (Auth::user()->user_id != $user_id) {
 				return redirect()->intended(
 					'home/'.Auth::user()->user_id);
 			}
+			// Code 
+		} else { // User not logged on 
+			return redirect()->route('home_no_user_path');
+		}
+	}
+	public function deleteMessageConfirm($user_id, $message_id) {
+		// Check user is either the submitting seeker or a panel member
+		if (Auth::check()) { // User should be logged in 
+			if (Auth::user()->user_id != $user_id) {
+				return redirect()->intended(
+					'home/'.Auth::user()->user_id);
+			}
+			// Code 
+		} else { // User not logged on 
+			return redirect()->route('home_no_user_path');
+		}
+	}
+	
+	/* Functions for viewing cases, 
+		both a list of all cases and individual cases */
+	public function getCases($user_id) {
+	
+		if (Auth::check()) { // User should be logged in
+<<<<<<< HEAD
+			//check if they are a professional and whatnot
+			//find all notes that are also cases
+=======
+			// Check if they are a professional and whatnot
+			// Find all notes that are also cases
+			if (Auth::user()->professional_id == 1) {
+				return redirect()->intended(
+					'home/'.Auth::user()->user_id);
+			}
+>>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
+			
+			$cases = $this->research_notes
+						  ->whereExists(function ($query) {
+							$query->select('*')
+							->from('research_case')
+<<<<<<< HEAD
+							->whereRaw('research_case.research_note_id = research_notes.research_note_id');
+							})->get();
+						  ; // Get cases
+			$case_info = $this->research_cases
+							  ->get();
+			return view("prototypeone.cases.displaycases", compact('cases', 'case_info', 'user_id'));
+=======
+							->whereRaw('research_case.research_note_id 
+								= research_notes.research_note_id');
+							})
+						  ->get(); // Get cases
+			$caseInfo = $this->research_cases->all(); // Case info
+			$numberOfCases = $this->research_cases->count();
+			return view("prototypeone.cases.displaycases", 
+				compact('cases', 'numberOfCases', 'caseInfo', 'user_id'));
+>>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
+			
+		} else { // user not logged on
+			return redirect()->route('home_no_user_path');
+		}
+	}
+<<<<<<< HEAD
+/* Gets individual case and the case's 
+=======
+	/* Gets individual case and the case's 
+>>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
+		messages and returns a view that displays them */
+	public function getCasePage ($user_id, $case_id) {
+		// Check user is either the submitting seeker or a panel member
+		if (Auth::check()) { // User should be logged in 
+<<<<<<< HEAD
+			if (Auth::user()->user_id != $user_id) {
+				return redirect()->intended(
+					'home/'.Auth::user()->user_id);
+			}
+=======
+			/* Check that the user id is the user who owns 
+			this case id and the professionals */
+			$panel = $this->professionals->get();
+			$owner = $this->research_notes
+						  ->find(
+						  		$this->research_cases
+						  			 ->find($case_id)
+						  			 ->research_note_id)
+						  ->user_id; 
+			if (Auth::user()->user_id != $owner) {
+				// We aren't the owner. Check if user is 
+				// a profesional
+				$valid = false;
+				for ($i = 0; $i < $this->professionals->count(); ++$i) {
+					$userInfo = $this->users
+									 ->where(
+									 	"professional_id", "=", 
+									 	$panel[$i]->professional_id
+									 )
+									 ->get()
+									 ->first();
+					if ($userInfo->user_id == Auth::user()->user_id) {
+						$valid = true;
+						break;
+					}
+				}
+				if (!$valid) {
+					return redirect()->intended(
+					'home/'.Auth::user()->user_id);
+				}
+			}
+
+>>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
 			// Actual code 
 			$research_note = 
 				$this->research_notes
@@ -373,7 +572,12 @@ class PrototypeOneController extends Controller {
 					 ->where("case_id", "=", $case_id)
 					 ->get();
 			return view("prototypeone.cases.viewcase", 
+<<<<<<< HEAD
 				compact('research_note', 'user', 'messages', 'case_id', 'user_id'));
+=======
+				compact('research_note', 'user', 'messages', 'case_id', 
+					'user_id'));
+>>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
 		} else { // User not logged on 
 			return redirect()->route('home_no_user_path');
 		}
@@ -404,16 +608,20 @@ class PrototypeOneController extends Controller {
 		if (!strcmp("Seeker", $request->get('usertype'))) { // AT Seeker 
 			$user->professional_id = 1;
 			$user->supplier_id = 1;
-		} else if (!strcmp("Professional", $request->get('usertype'))) { // AT Professional
+			$user->expert_user_id = 1;
+		} else if (!strcmp("Professional", $request->get('usertype'))) { 
+			// AT Professional
 			// Create and save new professional object
 			$professional = new Professional;
 			$professional->title = $request->get('title');
 			$professional->about = $request->get('about');
-			$professional->qualifications = $request->get('qualifications');
+			$professional->qualifications = $request
+									->get('qualifications');
 			$professional->save();
 			// Set professional id and supplier id of user model
 			$user->professional_id = $professional->professional_id;
 			$user->supplier_id = 1;
+			$user->expert_user_id = 1;
 		} else if (!strcmp("Supplier", $request->get('usertype'))) {
 			// Create and save new supplier object
 			$supplier = new Supplier;
@@ -422,43 +630,66 @@ class PrototypeOneController extends Controller {
 			$supplier->suburb = $request->get('suburb');
 			$supplier->state = $request->get('state');
 			$supplier->post_code = $request->get('post_code');
-			$supplier->work_phone_number = $request->get('work_phone_number');
-			$supplier->mobile_phone_number = $request->get('mobile_phone_number');
+			$supplier->work_phone_number = $request
+											->get('work_phone_number');
+			$supplier->mobile_phone_number = $request
+											->get('mobile_phone_number');
 			$supplier->description = $request->get('description');
 			$supplier->save();
 			// Set supplier id and seeker id of user model
 			$user->professional_id = 1;
 			$user->supplier_id = $supplier->supplier_id;
+			$user->expert_user_id = 1;
+		} else if (!strcmp("Expert User", $request->get('usertype'))) {
+			// Create and save a new Expert User object
+			$expert_user = new ExpertUser;
+			$expert_user->qualifications = $request->get('qualifications');
+			$expert_user->save();
+			$user->professional_id = 1;
+			$user->supplier_id = 1;
+			$user->expert_user_id = $expert_user->expert_user_id;
 		}
 		$user->save(); // Finish creating User
 		$extrainfo;
 		if (!strcmp($user->usertype, 'Seeker')) { // Simple user info
 			$extrainfo = null;
-		} else if (!strcmp($user->usertype, 'Professional')) { // Professional info
-			$extrainfo = $this->professionals->find($user->professional_id);
-		} else if (!strcmp($user->usertype, 'Supplier')) { // Supplier info
+		} else if (!strcmp($user->usertype, 'Professional')) { 
+			// Professional info
+			$extrainfo = $this->professionals
+							  ->find($user->professional_id);
+		} else if (!strcmp($user->usertype, 'Supplier')) { 
+			// Supplier info
 			$extrainfo = $this->suppliers->find($user->supplier_id);
+		} else if (!strcmp($user->usertype, 'Expert User')) {
+			// Expert User info
+			$extrainfo = $this->expert_users->find($user->expert_user_id);
 		}
-		return view("prototypeone.accountapproved", compact('user', 'extrainfo'));
+		return view("prototypeone.accountapproved", 
+			compact('user', 'extrainfo'));
 	}
 
 	/**
-	* Functions handling three different login forms
+	* Functions handling three different register forms
 	*/
 	
-	/* AT Seeker login form */
+	/* AT Seeker register form */
 	public function seekerRegister () {
 		return view("prototypeone.seekerRegister");
 	}
 	
-	/* AT Professional login form */
-	public function professionalRegister() {
+	/* AT Professional register form */
+	public function professionalRegister () {
 		return view("prototypeone.professionalRegister");
 	}
 	
-	/* AT Supplier login form */
-	public function supplierRegister() {
+	/* AT Supplier register form */
+	public function supplierRegister () {
 		return view("prototypeone.supplierRegister");
+	}
+
+	/* AT Expert User register form */
+	public function expertUserRegister () {
+		return view("prototypeone.expertUserRegister");
 	}
 	
 	/* test function */

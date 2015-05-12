@@ -13,9 +13,11 @@
 		<p><strong>Email: </strong> {{ $user->email }} </p>
 		<p><strong>Created At: </strong> {{ $user->created_at }} </p>
 		<p><strong>Updated At: </strong> {{ $user->updated_at }} </p>
-		@if ($user->usertype === "Professional")
-			<p><strong>Title: </strong> {{ $extrainfo->title}} </p>
-			<p><strong>About: </strong> {{ $extrainfo->about}} </p>
+		@if ($user->usertype === "Professional" || $user->usertype === "Expert User")
+			@if ($user->usertype === "Professional")
+				<p><strong>Title: </strong> {{ $extrainfo->title}} </p>
+				<p><strong>About: </strong> {{ $extrainfo->about}} </p>
+			@endif
 			<p><strong>Qualifications: </strong> {{ $extrainfo->qualifications}} </p>
 		@elseif ($user->usertype === "Supplier")
 			<p><strong>Street Number: </strong> {{ $extrainfo->street_number}} </p>
