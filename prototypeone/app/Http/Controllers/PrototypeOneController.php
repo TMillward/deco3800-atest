@@ -13,10 +13,7 @@ use App\Professional;
 use App\Supplier;
 use App\ResearchCase;
 use App\Message;
-<<<<<<< HEAD
-=======
 use App\ExpertUser;
->>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\MessageBag;
@@ -71,12 +68,9 @@ class PrototypeOneController extends Controller {
 		if (Auth::attempt($userinfo)) {
 			// Get user info
 			$user = Auth::user();
-<<<<<<< HEAD
-			return redirect()->intended('home/'.$user->user_id); // Authentication Succeeded
-=======
 			// Authentication Succeeded
 			return redirect()->intended('home/'.$user->user_id); 
->>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
+
 		} else {
 			// Authentication Failed
 			// Create a message bag containing all the errors
@@ -199,20 +193,6 @@ class PrototypeOneController extends Controller {
 	/**
 	* Function validating and authenticating a new note
 	*/
-<<<<<<< HEAD
-	public function createNoteCheck (CreateNoteRequest $request) {
-		/* Create Database Instance */
-		$note = new ResearchNote; /* Create New Database Instance */
-		$user = Auth::user(); // Current User
-		$note->user_id = $user->user_id; // Set User Id
-		$note->title = $request->get('title');
-		$note->research_text = $request->get('research_text');
-		/* Set Slug */
-		$slugcontainer = str_slug($request->get('title'), "-");
-		$note->slug = $slugcontainer;
-		$note->save(); // Finish creating Note
-		return view("prototypeone.newnoteapproved", compact('user'), compact('note'));
-=======
 	public function createNoteCheck (CreateNoteRequest $request, 
 			$user_id) {
 		if (Auth::check()) { // User is logged in.
@@ -236,8 +216,6 @@ class PrototypeOneController extends Controller {
 		} else { // No user logged in
 			return redirect()->route("home_no_user_path");
 		}
-		
->>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
 	}
 	
 	/**
@@ -267,12 +245,9 @@ class PrototypeOneController extends Controller {
 	/**
 	* Function checking the edit of a research note
 	*/
-<<<<<<< HEAD
-	public function editNoteCheck (CreateNoteRequest $request, $user_id, $research_note_id) {
-=======
+
 	public function editNoteCheck (CreateNoteRequest $request, $user_id, 
 			$research_note_id) {
->>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
 		if (Auth::check()) { // User should be logged in
 			$user = Auth::user(); // Get user
 			if ($user->user_id != $user_id) { // Wrong user id.
@@ -349,12 +324,7 @@ class PrototypeOneController extends Controller {
 			return redirect()->route('home_no_user_path');
 		}
 	}
-<<<<<<< HEAD
-	//PANEL AND CASE FUNCTIONS
-	/*Functions for Research Cases*/	
-	public function submitCase ($user_id, $research_id) {
-		if (Auth::check()) { // User should be logged in
-=======
+
 	/*	PANEL AND CASE FUNCTIONS */
 	/* Functions for Research Cases */	
 	public function submitCase ($user_id, $research_note_id) {
@@ -364,7 +334,6 @@ class PrototypeOneController extends Controller {
 					'home/'.Auth::user()->user_id);
 			}
 			/* Create research case */
->>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
 			$case = new ResearchCase;
 			$case->research_note_id = $research_note_id;
 			$case->status = false;
@@ -395,10 +364,6 @@ class PrototypeOneController extends Controller {
 	/* Functions for case messages */
 	public function submitMessage ($user_id, $case_id,
 			SubmitMessageRequest $request) {
-<<<<<<< HEAD
-		
-=======
->>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
 		if (Auth::check()) { // User should be logged in
 			// Need to check that user is authorised to submit messages 
 			// (so panel member)
@@ -406,19 +371,12 @@ class PrototypeOneController extends Controller {
 				return redirect()->intended(
 					'home/'.Auth::user()->user_id);
 			}
-<<<<<<< HEAD
-			
-=======
->>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
+
 			$message = new Message;
 			$message->case_id = $case_id;
 			$message->user_id = $user_id;
 			$message->message = $request->get('message_text');
 			$message->save(); // Insert message
-<<<<<<< HEAD
-			return redirect()->intended('home/' . $user_id . '/cases/'. $case_id );
-		} else { // User not logged on
-=======
 			return redirect()
 				->intended('home/'.$user_id.'/cases/'.$case_id);
 		} else { // User not logged on
@@ -434,7 +392,6 @@ class PrototypeOneController extends Controller {
 			}
 			// Code 
 		} else { // User not logged on 
->>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
 			return redirect()->route('home_no_user_path');
 		}
 	}
@@ -468,30 +425,18 @@ class PrototypeOneController extends Controller {
 	public function getCases($user_id) {
 	
 		if (Auth::check()) { // User should be logged in
-<<<<<<< HEAD
-			//check if they are a professional and whatnot
-			//find all notes that are also cases
-=======
+
 			// Check if they are a professional and whatnot
 			// Find all notes that are also cases
 			if (Auth::user()->professional_id == 1) {
 				return redirect()->intended(
 					'home/'.Auth::user()->user_id);
 			}
->>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
-			
+		
 			$cases = $this->research_notes
 						  ->whereExists(function ($query) {
 							$query->select('*')
 							->from('research_case')
-<<<<<<< HEAD
-							->whereRaw('research_case.research_note_id = research_notes.research_note_id');
-							})->get();
-						  ; // Get cases
-			$case_info = $this->research_cases
-							  ->get();
-			return view("prototypeone.cases.displaycases", compact('cases', 'case_info', 'user_id'));
-=======
 							->whereRaw('research_case.research_note_id 
 								= research_notes.research_note_id');
 							})
@@ -500,27 +445,16 @@ class PrototypeOneController extends Controller {
 			$numberOfCases = $this->research_cases->count();
 			return view("prototypeone.cases.displaycases", 
 				compact('cases', 'numberOfCases', 'caseInfo', 'user_id'));
->>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
 			
 		} else { // user not logged on
 			return redirect()->route('home_no_user_path');
 		}
 	}
-<<<<<<< HEAD
-/* Gets individual case and the case's 
-=======
 	/* Gets individual case and the case's 
->>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
 		messages and returns a view that displays them */
 	public function getCasePage ($user_id, $case_id) {
 		// Check user is either the submitting seeker or a panel member
 		if (Auth::check()) { // User should be logged in 
-<<<<<<< HEAD
-			if (Auth::user()->user_id != $user_id) {
-				return redirect()->intended(
-					'home/'.Auth::user()->user_id);
-			}
-=======
 			/* Check that the user id is the user who owns 
 			this case id and the professionals */
 			$panel = $this->professionals->get();
@@ -553,7 +487,6 @@ class PrototypeOneController extends Controller {
 				}
 			}
 
->>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
 			// Actual code 
 			$research_note = 
 				$this->research_notes
@@ -572,12 +505,8 @@ class PrototypeOneController extends Controller {
 					 ->where("case_id", "=", $case_id)
 					 ->get();
 			return view("prototypeone.cases.viewcase", 
-<<<<<<< HEAD
-				compact('research_note', 'user', 'messages', 'case_id', 'user_id'));
-=======
 				compact('research_note', 'user', 'messages', 'case_id', 
 					'user_id'));
->>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
 		} else { // User not logged on 
 			return redirect()->route('home_no_user_path');
 		}

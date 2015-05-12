@@ -23,11 +23,8 @@ class SubmitMessageRequest extends FormRequest {
 	public function rules()
 	{
 		return [
-<<<<<<< HEAD
-			'message_text' => 'required'
-=======
+
 			'message_text'	=> 'required'
->>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
 		];
 	}
 	

@@ -2,18 +2,6 @@
 @section("title", "Cases")
 
 @section("content")
-<<<<<<< HEAD
-	@for($i = 0; $i < count($cases); $i++)<!-- are actually notes for acces to users and titles-->
-		<div class="case link">
-			<!--cases display-->
-			<p> {{$cases[$i]->user_id}}</p>
-			<p> {{$cases[$i]->title}}</p>
-			{!! HTML::linkRoute('get_case_page', 'view case', [$user_id, $case_info[$i]->case_id]) !!}	
-		</div>
-	
-
-	@endfor
-=======
 	<h1> Currently Active Research Cases </h1>
 	<p> 
 		Below are the cases currently pending your review. Please 
@@ -52,5 +40,4 @@
 			[$user_id]) 
 		!!}
 	</p>
->>>>>>> 9cc930b88c53f1b46f54c3f2c84686b2c5770400
 @stop
