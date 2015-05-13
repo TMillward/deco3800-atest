@@ -9,8 +9,8 @@ class UserTableSeeder extends Seeder {
 		DB::table('users')->delete();
 		User::create(array(
 			'username'			=> 'testname',
-			'name' 				=> 'Unknown Person',
-			'password'			=> Hash::make('chocolateisevil'),
+			'name' 				=> 'Arthur Haynes ',
+			'password'			=> Hash::make('testname'),
 			'usertype'			=> 'Seeker',
 			'professional_id'	=> 1,
 			'supplier_id'		=> 1,
@@ -20,9 +20,9 @@ class UserTableSeeder extends Seeder {
 		));
 		User::create(array(
 			'username' 			=> 'testname2',
-			'name'				=> 'Chuck Norris',
-			'email'				=> 'a@y.com',
-			'password'			=> Hash::make('1234'),
+			'name'				=> 'Jenna Baker',
+			'email'				=> 'test@testemails.com',
+			'password'			=> Hash::make('testname2'),
 			'usertype'			=> 'Professional',
 			'professional_id'	=> 2,
 			'supplier_id'		=> 1,
@@ -32,8 +32,8 @@ class UserTableSeeder extends Seeder {
 		));
 		User::create(array(
 			'username'			=> 'testname3',
-			'name'				=> 'Random Person',
-			'password'			=> Hash::make('4321'),
+			'name'				=> 'Marcus Kim ',
+			'password'			=> Hash::make('testname3'),
 			'usertype'			=> 'Supplier',
 			'professional_id'	=> 1,
 			'supplier_id'		=> 2,
@@ -43,8 +43,8 @@ class UserTableSeeder extends Seeder {
 		));
 		User::create(array(
 			'username'			=> 'testname4',
-			'name'				=> 'Number Two',
-			'password'			=> Hash::make('1'),
+			'name'				=> 'Ida Greer',
+			'password'			=> Hash::make('testname4'),
 			'usertype'			=> 'Expert User',
 			'professional_id' 	=> 1,
 			'supplier_id'		=> 1,

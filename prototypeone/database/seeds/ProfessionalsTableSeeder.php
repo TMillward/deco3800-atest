@@ -15,9 +15,9 @@ class ProfessionalsTableSeeder extends Seeder {
 		));
 		
 		Professional::create(array(
-			'title'				=> "Mr.",
-			'about'				=> "Nothing About Me",
-			'qualifications'	=> "I have qualifications",
+			'title'				=> "Ms.",
+			'about'				=> "I am an OT",
+			'qualifications'	=> "I studied at university xyz and have worked in the industry for 20 years",
 			'created_at'		=> new DateTime(),
 			'updated_at'		=> new DateTime()
 		));

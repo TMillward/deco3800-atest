@@ -1,4 +1,4 @@
-@extends("prototypeone.template.case")
+@extends("prototypeone.template.master")
 
 @section("title", "Case Notes")
 @section("content")

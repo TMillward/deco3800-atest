@@ -21,14 +21,14 @@ class SuppliersTableSeeder extends Seeder {
 		));
 		
 		Supplier::create(array(
-			'street_number' 		=> "Platform 9 3/4",
+			'street_number' 		=> "9 3/4",
 			'street_name'			=> "English Street",
 			'suburb'				=> "Sub-urb",
-			'state'					=> "TAS",
-			'post_code'				=> "1234",
-			'work_phone_number'		=> "0000 0000",
-			'mobile_phone_number'	=> "0404 0303 231",
-			'description'			=> "I am a random supplier. I supply AT",
+			'state'					=> "QLD",
+			'post_code'				=> "4000",
+			'work_phone_number'		=> "3333 3333",
+			'mobile_phone_number'	=> "0444 4444 444",
+			'description'			=> "My company supplies assistive technology",
 			'created_at'			=> new DateTime(),
 			'updated_at'			=> new DateTime()
 		));

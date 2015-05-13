@@ -14,7 +14,7 @@ class ExpertUsersTableSeeder extends Seeder {
 		));
 		
 		ExpertUser::create(array(
-			'qualifications'	=> "I designed this website. I think it's beautiful",
+			'qualifications'	=> "I have used this website before",
 			'created_at'		=> new DateTime(),
 			'updated_at'		=> new DateTime()
 		));
