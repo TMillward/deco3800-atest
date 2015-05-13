@@ -14,6 +14,7 @@ use App\Supplier;
 use App\ResearchCase;
 use App\Message;
 use App\ExpertUser;
+use App\Photo;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\MessageBag;
@@ -28,12 +29,12 @@ class PrototypeOneController extends Controller {
 	private $research_cases;// Eloquent model of research cases table
 	private $messages; // Eloquent model of case messages
 	private $expert_users; // Eloquent model of expert users
-	
+	private $research_photos;
 	public function __construct (User $users, ResearchNote $research_notes, 
 								Professional $professionals, 
 								Supplier $suppliers, Message $messages,
 								ResearchCase $cases, 
-								ExpertUser $expert_users) {
+								ExpertUser $expert_users, Photo $photos) {
 		$this->users = $users;
 		$this->research_notes = $research_notes;
 		$this->professionals = $professionals;
@@ -41,6 +42,7 @@ class PrototypeOneController extends Controller {
 		$this->research_cases = $cases;
 		$this->messages = $messages;
 		$this->expert_users = $expert_users;
+		$this->research_photos = $photos;
 	}
 
 	/*
@@ -511,6 +513,65 @@ class PrototypeOneController extends Controller {
 			return redirect()->route('home_no_user_path');
 		}
 	}
+	/** Functions for uploading, deleting and viewing photos*/
+	/**
+	* Creates an entry in the images table to reference a photo saved on disk.
+	* requires that upon saving a note the function to save notes calls this.
+	* @require images to be stored on disk in the following system: 
+	* 			/public/note_images/{user_id}/{research_note_id}/{filename}
+	* @require $path is unique.
+	*/
+	private function savePhoto ($research_note_id, $path) {
+		if (Auth::check()) { // User should be logged in
+			// No need to check that user is authorised to submit images to
+			// a particular research note.
+
+			$photo = new Photo;
+			$message->path = $path;
+			$message->research_note_id = $research_note_id;
+			$message->save(); // Insert message
+			/*return redirect()
+				->intended('home/'.$user_id.'/');*/ // to be decided
+		} else { // User not logged on
+			return redirect()->intended('home_no_user_path');
+		}
+	}
+	/**
+	* Removes an entry from the images table (actual deletion 
+	* from disk will be done elsewhere)
+	*/
+	public function deletePhoto ($research_note_id, $path) {
+		if (Auth::check()) { // User should be logged in
+			
+			$photo = this->$research_photos
+					     ->where('path', '=', $path)
+						 ->get()
+						 -first();
+			$photo->delete();
+			
+		else { // User not logged on
+			return redirect()->intended('home_no_user_path');
+		}
+	}
+	
+	/**
+	* Returns all photos related to a given research note.
+	* The functions that view notes and cases can call this function.
+	* and pass the values to the views from there
+	*/
+	private function getPhotos ($research_note_id) {
+		if (Auth::check()) { // User should be logged in
+			$photos = $this->research_photos
+						   ->where('research_note_id', '=', $research_note_id)
+						   ->get();
+			return $photos;
+		} else { // User not logged on
+			return redirect()->intended('home_no_user_path');
+		}
+	}
+	
+	
+	
 	
 	
 	/**
