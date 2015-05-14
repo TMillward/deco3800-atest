@@ -16,6 +16,20 @@
 		<p><strong>Created At: </strong> {{ $note->created_at }} </p>
 		<p><strong>Updated At: </strong> {{ $note->updated_at }} </p>
 	</div>
+	<div id="images">
+			<table class="table table-hover">
+				<tr>
+					<th>Image</th>
+					<th>Date Added</th>
+				</tr>
+				@foreach($images as $image)
+					<tr>
+						<td><a href="{{ $image->path }}">{{ $image->path }}</a></td><!-- preferable to have a route here instead to image-->
+						<td>{{ $image->created_at }}</td>
+					</tr>
+				@endforeach
+			</table>
+	</div>
 	
 	<div class="container">
 		<p>{!! HTML::linkRoute('home_user_path', 

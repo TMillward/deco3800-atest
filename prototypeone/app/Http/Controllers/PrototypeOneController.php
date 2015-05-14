@@ -167,8 +167,9 @@ class PrototypeOneController extends Controller {
 						   		$research_note_id)
 						   ->get()
 						   ->first();
+			$images = getPhotos($research_notes_id);
 			return view("prototypeone.viewnote", 
-				compact('note', 'user', 'isCase'));
+				compact('note', 'user', 'isCase','images'));
 		} else {
 			return redirect()->route('home_no_user_path');
 		}
@@ -213,8 +214,25 @@ class PrototypeOneController extends Controller {
 			$slugcontainer = str_slug($request->get('title'), "-");
 			$note->slug = $slugcontainer;
 			$note->save(); // Finish creating Note
+			
+			$images; // Array of images
+			
+			//for each photo //modify request
+			for ($i = 0, $i < sizeof($request->photos), $i++) {
+				$photo = new Photo;
+				$photo->research_note_id = $note->research_note_id;
+				$photo->path = $request->photos[$i]->path;
+				$photo->save();
+				array_push($images, $photo);
+			}
+			
+			/*find a way to get research note. perhaps search for user_id and title
+			$images = $this->research_photos
+						   ->where('research_notes_id', '=', $request->research_note_id)
+						   ->get();
+			*/
 			return view("prototypeone.newnoteapproved", 
-				compact('user', 'note'));
+				compact('user', 'note', 'images'));
 		} else { // No user logged in
 			return redirect()->route("home_no_user_path");
 		}
@@ -238,7 +256,8 @@ class PrototypeOneController extends Controller {
 						 	$research_note_id)
 						 ->get()
 						 ->first(); // Get note
-			return view("prototypeone.editnote", compact('user', 'note'));
+			$images = getPhotos($research_note_id);
+			return view("prototypeone.editnote", compact('user', 'note', 'images'));
 		} else {
 			return redirect()->route('home_no_user_path');
 		}
@@ -269,8 +288,19 @@ class PrototypeOneController extends Controller {
 			$slugcontainer = str_slug($request->get('title'), "-");
 			$note->slug = $slugcontainer;
 			$note->save(); // Finish creating Note
+			
+			$images; // Array of images
+			//for each photo //modify request
+			for ($i = 0, $i < sizeof($request->photos), $i++) {
+				$photo = new Photo;
+				$photo->research_note_id = $note->research_note_id;
+				$photo->path = $request->photos[$i]->path;
+				$photo->save();
+				array_push($images, $photo);
+			}
+			
 			return view("prototypeone.editnoteapproved", 
-				compact('user', 'note'));
+				compact('user', 'note', 'images'));
 		} else {
 			return redirect()->route('home_no_user_path');
 		}
@@ -294,6 +324,7 @@ class PrototypeOneController extends Controller {
 						 	$research_note_id)
 						 ->get()
 						 ->first(); // Get note
+			
 			return view("prototypeone.deletenoteconfirm", 
 				compact('user', 'note'));
 		} else {
@@ -321,6 +352,11 @@ class PrototypeOneController extends Controller {
 						 ->first(); // Get note
 			// Delete the note
 			$note->delete();
+			$images = getPhotos($research_note_id);
+			//delete each photo
+			for ($i = 0, $i < sizeof($images), $i++) {
+				deletePhoto($research_note_id, $images->path);
+			}
 			return redirect()->intended('home/'.$user->user_id);
 		} else {
 			return redirect()->route('home_no_user_path');
@@ -393,6 +429,7 @@ class PrototypeOneController extends Controller {
 					'home/'.Auth::user()->user_id);
 			}
 			// Code 
+			//should run update on DB after first returning existing message (so edit and not rewrite)
 		} else { // User not logged on 
 			return redirect()->route('home_no_user_path');
 		}
@@ -405,6 +442,7 @@ class PrototypeOneController extends Controller {
 					'home/'.Auth::user()->user_id);
 			}
 			// Code 
+			//modify view to check that they want to delete
 		} else { // User not logged on 
 			return redirect()->route('home_no_user_path');
 		}
@@ -417,6 +455,7 @@ class PrototypeOneController extends Controller {
 					'home/'.Auth::user()->user_id);
 			}
 			// Code 
+			// delete operation on DB
 		} else { // User not logged on 
 			return redirect()->route('home_no_user_path');
 		}
@@ -506,9 +545,10 @@ class PrototypeOneController extends Controller {
 				$this->messages
 					 ->where("case_id", "=", $case_id)
 					 ->get();
+			$images = getPhotos($research_note->research_note_id);		 
 			return view("prototypeone.cases.viewcase", 
 				compact('research_note', 'user', 'messages', 'case_id', 
-					'user_id'));
+					'user_id', 'images'));
 		} else { // User not logged on 
 			return redirect()->route('home_no_user_path');
 		}
@@ -522,19 +562,10 @@ class PrototypeOneController extends Controller {
 	* @require $path is unique.
 	*/
 	private function savePhoto ($research_note_id, $path) {
-		if (Auth::check()) { // User should be logged in
-			// No need to check that user is authorised to submit images to
-			// a particular research note.
-
 			$photo = new Photo;
 			$message->path = $path;
 			$message->research_note_id = $research_note_id;
 			$message->save(); // Insert message
-			/*return redirect()
-				->intended('home/'.$user_id.'/');*/ // to be decided
-		} else { // User not logged on
-			return redirect()->intended('home_no_user_path');
-		}
 	}
 	/**
 	* Removes an entry from the images table (actual deletion 
@@ -560,14 +591,10 @@ class PrototypeOneController extends Controller {
 	* and pass the values to the views from there
 	*/
 	private function getPhotos ($research_note_id) {
-		if (Auth::check()) { // User should be logged in
-			$photos = $this->research_photos
-						   ->where('research_note_id', '=', $research_note_id)
-						   ->get();
-			return $photos;
-		} else { // User not logged on
-			return redirect()->intended('home_no_user_path');
-		}
+		$photos = $this->research_photos
+					   ->where('research_note_id', '=', $research_note_id)
+					   ->get();
+		return $photos;
 	}
 	
 	

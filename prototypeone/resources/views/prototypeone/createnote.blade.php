@@ -31,7 +31,24 @@
 				{!! $errors->first('research_text', 
 								   '<span class="help-block">:message</span>') !!}
 			</div>
-			
+			<?php
+				//$images = array();
+			?>
+			<div id="images">
+				<table class="table table-hover">
+					<tr>
+						<th>Image name</th>
+						<th>Remove</th>
+					</tr>
+					@for($i = 0; $i < sizeof($images); $i++)
+					<tr>
+						<td>{{ $images[$i]->path }}</td><!-- preferable to have a route here instead to image-->
+						<td>Remove image</td><!--need some way to mark for deletion-->
+					</tr>
+					@endfor
+					<tr id="add_image_form"></tr><!-- Upon adding image a new row should appear-->
+				</table>
+			</div>		
 			<div class="form-group">
 				{!! Form::submit('Save Note', 
 								['class' => 'btn btn-primary']) !!}
