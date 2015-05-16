@@ -28,13 +28,50 @@
 				 'name' => 'submitButton']) !!}
 			{!! Form::close() !!}
 		@else
-			<p>
-				<strong>Review Status: </strong> 
-				{!! HTML::linkRoute('get_case_page', 
-				'This research note is pending review. Click here 
-				to look at its progress', 
-				[$user->user_id, $isCase->case_id]) !!} 
-			</p>
+			@if ($isCase->status)
+				<p>
+					This case has been resolved. If you 
+					would like it to be unresolved, please 
+					click the button below
+				</p>
+				{!! Form::open(['url' => route('toggle_case_resolution')]) !!}
+					 {!! Form::hidden('case_id', $isCase->case_id) !!}
+					 {!! Form::submit('Unresolve This Case', 
+					 ['class' => 'btn btn-primary', 
+					  'name' => 'submitButton']) !!}
+				{!! Form::close() !!}
+
+				<p>
+					You can generate a PDF report of this research note 
+					by clicking the button below.
+				</p>
+
+				{!! Form::open(['url' => route('generate_report'), 
+								'target' => "_blank"]) !!}
+					{!! Form::hidden('note_id', $note->research_note_id) !!}
+					{!! Form::submit('Generate Report', 
+					['class' => 'btn btn-success', 
+					 'name' => 'submitButton']) !!}
+				{!! Form::close() !!}
+			@else
+				<p>
+					<strong>Review Status: </strong> 
+
+					{!! HTML::linkRoute('get_case_page', 
+					'This research note is pending review. Click here 
+					to look at its progress.', 
+					[$user->user_id, $isCase->case_id]) !!} 
+
+					This case is not yet resolved. If you would like to 
+					resolve it, please click the button below.
+				</p>
+				{!! Form::open(['url' => route('toggle_case_resolution')]) !!}
+					 {!! Form::hidden('case_id', $isCase->case_id) !!}
+					 {!! Form::submit('Resolve This Case', 
+					 ['class' => 'btn btn-primary', 
+					  'name' => 'submitButton'])!!}
+				{!! Form::close() !!}
+			@endif
 		@endif
 	</div>
 

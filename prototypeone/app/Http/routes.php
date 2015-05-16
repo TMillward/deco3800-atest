@@ -127,5 +127,26 @@ Route::post("newAccount",
 		    ['as' => 'newaccount_path', 		
 			 'uses' => "PrototypeOneController@newAccount"]);
 
+// Toggle Resolution Route - Toggles the status of a case between 
+// resolved and unresolved
+Route::post("toggleResolution", 
+			['as' => 'toggle_case_resolution', 
+			 'uses' => "PrototypeOneController@toggleResolution"]);
+
+// Generate Report Route - Generates report using info given
+Route::post("generateReport", 
+			['as' => 'generate_report', 
+			 'uses' => "PrototypeOneController@generateReport"]);
+
+/**
+* Routes used for testing
+*/
+
+// Route for testing PDF
+Route::get("testPDF", 
+		   ['as' => 'testFirstPDF_path', 
+		    'uses' => 'PrototypeOneController@testFirstPDF']);
+
+
 // Easter eggs for people
 Route::get("pizza", "PrototypeOneController@pizza");

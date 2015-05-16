@@ -14,10 +14,11 @@ use App\Supplier;
 use App\ResearchCase;
 use App\Message;
 use App\ExpertUser;
-use Illuminate\Support\Facades\Auth;
+use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\MessageBag;
-use Illuminate\Support\Facades\Session;
+use Session;
+use PDF; // 1st PDF Package Facade
 
 class PrototypeOneController extends Controller {
 
@@ -598,6 +599,99 @@ class PrototypeOneController extends Controller {
 	}
 
 	/**
+	* Function that toggles the resolution of a given case
+	*/
+	public function toggleResolution (Request $request) {
+		if (Auth::check()) { // A user is logged in
+			$user = Auth::user(); // The user
+
+			$case = $this->research_cases
+					 ->find($request->case_id); // The case to toggle
+
+			// The research note to check if the current user
+			// owns this note
+			$research_note = $this->research_notes
+								  ->find($case->research_note_id);
+			if ($user->user_id != $research_note->user_id) {
+				// Unauthorized user. Redirect
+				return redirect()->intended(
+					'home/'.$user->user_id);
+			}
+
+			// The user is the owner.
+			$case->status = !$case->status; // Toggle case status
+			$case->save(); // Save result
+			return view("prototypeone.toggledCaseStatus", 
+					compact('user', 'research_note', 'case'));
+		} else return redirect()->route('home_no_user_path'); // Unauthorized
+	}
+
+	/**
+	* Function that generates report with the given research note id (hidden)
+	*/
+	public function generateReport (Request $request) {
+		if (Auth::check()) { // User is logged in 
+			$user = Auth::user(); // The user
+
+			// The research note to be transformed into a report
+			$note = $this->research_notes->find($request->note_id);
+
+			// Check that the currently logged in user owns this.
+			if ($user->user_id != $note->user_id) { // Unauthorized user
+				return redirect()->intended(
+					'home/'.$user->user_id);
+			}
+
+			// The user is the owner. Get the contributors to the case
+			// Via their messages
+
+			$case_id = $this->research_cases
+							->where("research_note_id", "=", 
+									$note->research_note_id)
+							->get()
+							->first()
+							->case_id; // The case id
+
+			$contributor_ids = $this->messages
+							 ->distinct()
+							 ->select("user_id")
+							 ->where("case_id", "=", $case_id)
+							 ->whereNotIn("user_id", array($user->user_id))
+							 ->groupBy("user_id")
+							 ->get(); // The messages (excluding case owner)
+
+			$contributor_names = array(); // The names of the contributors
+
+			// Get all contributor names
+			foreach ($contributor_ids as $contributor) {
+				$contributor_name = $this->users
+										 ->select("name")
+										 ->where("user_id", "=", 
+										 		$contributor->user_id)
+										 ->first()
+										 ->name;
+				array_push($contributor_names, $contributor_name);
+			}
+
+			// Get the current time to check when this report was generated
+			$currentTime = date('l jS \of F Y h:i:s A');
+
+			$dataArray = array(); // Array to pass data to view
+
+			// Give array some data values
+			$dataArray['user'] = $user;
+			$dataArray['note'] = $note;
+			$dataArray['contributor_names'] = $contributor_names;
+			$dataArray['currentTime'] = $currentTime;
+
+			$report = PDF::loadView("prototypeone.report.generatedReport", 
+									$dataArray); // Generate the report
+
+			return $report->stream(); // Show page of the report
+		} else return redirect()->route('home_no_user_path'); // Unauthorized
+	}
+
+	/**
 	* Functions handling three different register forms
 	*/
 	
@@ -624,6 +718,12 @@ class PrototypeOneController extends Controller {
 	/* test function */
 	public function pizza () {
 		return view("prototypeone.pizza");
+	}
+
+	/* 1st PDF Package View Test */
+	public function testFirstPDF () {
+		$pdf = PDF::loadView("prototypeone.testPDF");
+		return $pdf->download("testdownload.pdf");
 	}
 	
 }
