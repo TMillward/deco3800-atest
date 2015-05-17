@@ -146,6 +146,10 @@ return [
 		'App\Providers\EventServiceProvider',
 		'App\Providers\RouteServiceProvider',
 
+		/**
+		* Other Service Providers
+		*/
+		'Barryvdh\DomPDF\ServiceProvider',
 	],
 
 	/*
@@ -182,6 +186,7 @@ return [
 		'Lang'      => 'Illuminate\Support\Facades\Lang',
 		'Log'       => 'Illuminate\Support\Facades\Log',
 		'Mail'      => 'Illuminate\Support\Facades\Mail',
+		'PDF'		=> 'Barryvdh\DomPDF\Facade', // First PDF Package Facade
 		'Password'  => 'Illuminate\Support\Facades\Password',
 		'Queue'     => 'Illuminate\Support\Facades\Queue',
 		'Redirect'  => 'Illuminate\Support\Facades\Redirect',
