@@ -221,8 +221,8 @@ class PrototypeOneController extends Controller {
 			$note->slug = $slugcontainer;
 			$note->save(); // Finish creating Note
 			
-			$images =$this->uploadImages($user_id, $note);
-
+		    $this->uploadImages($user_id, $note);
+			$images = $this->getPhotos($note->research_note_id);
 			return view("prototypeone.newnoteapproved", 
 				compact('user', 'note', 'images'));
 		} else { // No user logged in
@@ -271,7 +271,7 @@ class PrototypeOneController extends Controller {
 					'home/'.Auth::user()->user_id);
 			}
 			$note = $this->research_notes
-						 ->whereResearch_note_id($research_note_id)
+						 ->where('research_note_id', '=', $research_note_id)
 						 ->first();
 			// Change the title, text and slug
 			$note->title = $request->get('title');
@@ -280,17 +280,27 @@ class PrototypeOneController extends Controller {
 			$slugcontainer = str_slug($request->get('title'), "-");
 			$note->slug = $slugcontainer;
 			$note->save(); // Finish creating Note
+			//save new photos
+			$this->uploadImages($user_id, $note);
 			
-			$images; // Array of images
-			//for each photo //modify request
-			for ($i = 0; $i < sizeof($request->photos); $i++) {
-				$photo = new Photo;
-				$photo->research_note_id = $note->research_note_id;
-				$photo->path = $request->photos[$i]->path;
-				$photo->save();
-				array_push($images, $photo);
-			}
-			
+			//delete any removed photos
+			/*
+			for ($i = 0; $i < count($request->existing_images); $i++) {
+				if ($request->existing_images[$i][1] == true) {
+					//marked for deletion
+					//remove from DB
+					$photo = $this->research_photos
+								  ->where('path','=',$request->existing_images[$i][0])
+								  ->get();
+					$photo->delete();
+					
+					if (chdir ("./note_images/")) {
+						//delete from disk
+						unlink($request->existing_images[$i][0]);
+					}
+				}
+			}*/
+			$images = $this->getPhotos($note->research_note_id);
 			return view("prototypeone.editnoteapproved", 
 				compact('user', 'note', 'images'));
 		} else {
@@ -316,6 +326,7 @@ class PrototypeOneController extends Controller {
 						 	$research_note_id)
 						 ->get()
 						 ->first(); // Get note
+			//delete all photos too from disk and DB
 			
 			return view("prototypeone.deletenoteconfirm", 
 				compact('user', 'note'));

@@ -34,8 +34,9 @@
 								   '<span class="help-block">:message</span>') !!}
 			</div>
 			<div class="images_fields_wrap">
+				<button type="button" class="add_image_button" >Add image</button></br>
 				<div>{!! Form::file('image', ['name' => 'research_images[]']) !!}<a href="#" class="remove_field">remove</a></div> 
-				<p class="add_image_button" >Add image</p></br>
+				
 			</div>	
 			<div class="form-group">
 				{!! Form::submit('Save Note', 
