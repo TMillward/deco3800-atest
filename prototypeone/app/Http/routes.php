@@ -32,7 +32,7 @@ Route::get("home/{user_id}/create_note",
 			'uses' => "PrototypeOneController@createNote"]);
 
 // New Note Validation Route - Validate inputs given for a route
-Route::post("home/{user_id}/create_note/check", 
+Route::post("home/{user_id}/create_note/check/", 
 			['as' => 'create_note_check_path', 
 			 'uses' => "PrototypeOneController@createNoteCheck"]);
 
@@ -69,7 +69,7 @@ Route::patch("home/{user_id}/{research_note_id}/edit/check",
 // Delete Note Route - Delete a research note
 Route::get("home/{user_id}/{research_note_id}/delete", 
 		   ['as' => 'delete_path',			
-			'uses' => "PrototypeOneController@deleteNoteCheck"]);
+			'uses' => "PrototypeOneController@deleteNote"]);
 
 // Delete Note Validation Route - Confirm that note is to be deleted
 Route::get("home/{user_id}/{research_note_id}/delete/confirm", 

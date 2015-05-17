@@ -3,12 +3,13 @@
 @section("title", "Create A Research Note")
 
 @section("content")
+	
 	<h1>Create A New Research Note</h1>
 	
 	<div class="container">
 		<h2>Enter your details here</h2>
 		
-		{!! Form::open(['url' => route('create_note_check_path', [$user->user_id])]) !!}
+		{!! Form::open(array('url' => route('create_note_check_path', [$user->user_id]), 'files' =>true)) !!}
 		
 			<div class="form-group {{ $errors->has('title') ? 'has-error' : '' }}">
 				{!! Form::label('title', 
@@ -31,24 +32,12 @@
 				{!! $errors->first('research_text', 
 								   '<span class="help-block">:message</span>') !!}
 			</div>
-			<?php
-				//$images = array();
-			?>
-			<div id="images">
-				<table class="table table-hover">
-					<tr>
-						<th>Image name</th>
-						<th>Remove</th>
-					</tr>
-					@for($i = 0; $i < sizeof($images); $i++)
-					<tr>
-						<td>{{ $images[$i]->path }}</td><!-- preferable to have a route here instead to image-->
-						<td>Remove image</td><!--need some way to mark for deletion-->
-					</tr>
-					@endfor
-					<tr id="add_image_form"></tr><!-- Upon adding image a new row should appear-->
-				</table>
-			</div>		
+			
+			{!! Form::file('image', ['name' => 'research_images[]']) !!}
+			{!! Form::file('image', ['name' => 'research_images[]']) !!}
+			{!! Form::file('image', ['name' => 'research_images[]']) !!}
+			{!! Form::file('image', ['name' => 'research_images[]']) !!}
+			
 			<div class="form-group">
 				{!! Form::submit('Save Note', 
 								['class' => 'btn btn-primary']) !!}

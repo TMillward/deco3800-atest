@@ -19,4 +19,8 @@ class Photo extends Eloquent {
 	* Fillable values
 	*/
 	protected $fillable = ['research_note_id', 'path'];
+	/**
+	* Hidden fields
+	*/
+	protected $hidden = ['created_at', 'updated_at', 'deleted_at'];
 }

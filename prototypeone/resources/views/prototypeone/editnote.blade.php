@@ -33,12 +33,6 @@
 								   '<span class="help-block">:message</span>') !!}
 			</div>
 			
-			<?php 
-				$images_updated = $images; // Images_updated will be modified based on user actions (add/delete). to 
-										 // make matters simpler, elements will be marked for deletion (true or false) and only deleted when the
-										 // user submits the changes.
-			
-			?>
 			<div id="images">
 				<table class="table table-hover">
 					<tr>
@@ -46,14 +40,14 @@
 						<th>Date Added</th>
 						<th>Remove</th>
 					</tr>
-					@for($i = 0; $i < sizeof($images); $i++)
+					@for($i = 0; $i < count($images); $i++)
 						<tr>
 							<td>{{ $images[$i]->path }}</td><!-- preferable to have a route here instead to image-->
 							<td>{{ $images[$i]->created_at }}</td>
 							<td>Remove image</td><!--need some way to mark for deletion-->
 						</tr>
 					@endfor
-					<tr id="add_image_form"></tr><!-- Upon adding image a new row should appear-->
+					<tr id="add_image_form">Add image</tr><!-- Upon adding image a new row should appear-->
 				</table>
 			</div>
 			<div class="form-group">
@@ -67,7 +61,7 @@
 	
 	<div class="container">
 		<p>{!! HTML::linkRoute('home_user_path', 
-							   'Return to list of notes (Discards Current Note)', [$user->user_id]) !!}</p>
+							   'Return to list of notes (Discards any changes)', [$user->user_id]) !!}</p>
 	</div>
 	
 @stop

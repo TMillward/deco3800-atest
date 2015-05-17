@@ -19,6 +19,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Facades\Session;
+//for file uploads
+use Input;
+use Validator;
+use Redirect;
+
 
 class PrototypeOneController extends Controller {
 
@@ -167,7 +172,7 @@ class PrototypeOneController extends Controller {
 						   		$research_note_id)
 						   ->get()
 						   ->first();
-			$images = getPhotos($research_notes_id);
+			$images = $this->getPhotos($research_note_id);
 			return view("prototypeone.viewnote", 
 				compact('note', 'user', 'isCase','images'));
 		} else {
@@ -203,6 +208,7 @@ class PrototypeOneController extends Controller {
 				return redirect()->intended(
 					'home/'.Auth::user()->user_id);
 			}
+			
 			// Correct user. Continue
 			/* Insert Database Record */
 			$note = new ResearchNote; // Create New Database Instance
@@ -215,22 +221,8 @@ class PrototypeOneController extends Controller {
 			$note->slug = $slugcontainer;
 			$note->save(); // Finish creating Note
 			
-			$images; // Array of images
-			
-			//for each photo //modify request
-			for ($i = 0, $i < sizeof($request->photos), $i++) {
-				$photo = new Photo;
-				$photo->research_note_id = $note->research_note_id;
-				$photo->path = $request->photos[$i]->path;
-				$photo->save();
-				array_push($images, $photo);
-			}
-			
-			/*find a way to get research note. perhaps search for user_id and title
-			$images = $this->research_photos
-						   ->where('research_notes_id', '=', $request->research_note_id)
-						   ->get();
-			*/
+			$images =$this->uploadImages($user_id, $note);
+
 			return view("prototypeone.newnoteapproved", 
 				compact('user', 'note', 'images'));
 		} else { // No user logged in
@@ -256,7 +248,7 @@ class PrototypeOneController extends Controller {
 						 	$research_note_id)
 						 ->get()
 						 ->first(); // Get note
-			$images = getPhotos($research_note_id);
+			$images = $this->getPhotos($research_note_id);
 			return view("prototypeone.editnote", compact('user', 'note', 'images'));
 		} else {
 			return redirect()->route('home_no_user_path');
@@ -291,7 +283,7 @@ class PrototypeOneController extends Controller {
 			
 			$images; // Array of images
 			//for each photo //modify request
-			for ($i = 0, $i < sizeof($request->photos), $i++) {
+			for ($i = 0; $i < sizeof($request->photos); $i++) {
 				$photo = new Photo;
 				$photo->research_note_id = $note->research_note_id;
 				$photo->path = $request->photos[$i]->path;
@@ -352,9 +344,9 @@ class PrototypeOneController extends Controller {
 						 ->first(); // Get note
 			// Delete the note
 			$note->delete();
-			$images = getPhotos($research_note_id);
+			$images = $this->getPhotos($research_note_id);
 			//delete each photo
-			for ($i = 0, $i < sizeof($images), $i++) {
+			for ($i = 0; $i < sizeof($images); $i++) {
 				deletePhoto($research_note_id, $images->path);
 			}
 			return redirect()->intended('home/'.$user->user_id);
@@ -545,7 +537,7 @@ class PrototypeOneController extends Controller {
 				$this->messages
 					 ->where("case_id", "=", $case_id)
 					 ->get();
-			$images = getPhotos($research_note->research_note_id);		 
+			$images = $this->getPhotos($research_note->research_note_id);		 
 			return view("prototypeone.cases.viewcase", 
 				compact('research_note', 'user', 'messages', 'case_id', 
 					'user_id', 'images'));
@@ -554,6 +546,42 @@ class PrototypeOneController extends Controller {
 		}
 	}
 	/** Functions for uploading, deleting and viewing photos*/
+	/**
+	* Uploads a given file to the server
+	*/
+	private function uploadImages ($user_id, $note) {
+		/*photo stuff*/
+		//get files
+		$image_file_count = count(Input::file('research_images'));
+		$images = array(); // Array of images
+		
+		//validate that they are images
+		//rename and move
+		//check dir exists and create it if it does not
+		if (chdir ("./note_images/")) {
+			$directory = $user_id ."/". $note->research_note_id ."/";
+			if (!file_exists($directory)) {
+				mkdir($directory, 0777, true);//permissions need changing
+			}
+			
+			//to be integrated with other for loop below
+			for ($i = 0; $i < $image_file_count; $i++) {
+				$filename = Input::file('research_images')[$i]->getClientOriginalName();
+				//may have to use Input::file('research_images')->...
+				//and change $image_files to a count of the number of elements
+				Input::file('research_images')[$i]->move($directory, $filename);
+				//DB stuff
+				$photo = new Photo;
+				$photo->research_note_id = $note->research_note_id;
+				// system could change so that this stores only filename and exact path is determined later from note
+				$photo->path = $directory."/".$filename;
+				$photo->save();
+				array_push($images, $photo);
+				
+			}
+		}
+		return $images;
+	}
 	/**
 	* Creates an entry in the images table to reference a photo saved on disk.
 	* requires that upon saving a note the function to save notes calls this.
@@ -574,13 +602,13 @@ class PrototypeOneController extends Controller {
 	public function deletePhoto ($research_note_id, $path) {
 		if (Auth::check()) { // User should be logged in
 			
-			$photo = this->$research_photos
+			$photo = $this->$research_photos
 					     ->where('path', '=', $path)
 						 ->get()
 						 -first();
 			$photo->delete();
 			
-		else { // User not logged on
+		} else { // User not logged on
 			return redirect()->intended('home_no_user_path');
 		}
 	}
