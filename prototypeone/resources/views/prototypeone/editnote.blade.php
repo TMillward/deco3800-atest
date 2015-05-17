@@ -42,7 +42,7 @@
 					</tr>
 					@for($i = 0; $i < count($images); $i++)
 						<tr>
-							<td>{{ $images[$i]->path }}</td><!-- preferable to have a route here instead to image-->
+							<td><a href="/note_images/{{ $image->path }}">{{ $image->path }}</a></td><!-- preferable to have a route here instead to image-->
 							<td>{{ $images[$i]->created_at }}</td>
 							<td>Remove image</td><!--need some way to mark for deletion-->
 						</tr>

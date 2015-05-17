@@ -2,6 +2,7 @@
 
 @section("title", "Create A Research Note")
 
+
 @section("content")
 	
 	<h1>Create A New Research Note</h1>
@@ -32,12 +33,10 @@
 				{!! $errors->first('research_text', 
 								   '<span class="help-block">:message</span>') !!}
 			</div>
-			
-			{!! Form::file('image', ['name' => 'research_images[]']) !!}
-			{!! Form::file('image', ['name' => 'research_images[]']) !!}
-			{!! Form::file('image', ['name' => 'research_images[]']) !!}
-			{!! Form::file('image', ['name' => 'research_images[]']) !!}
-			
+			<div class="images_fields_wrap">
+				<div>{!! Form::file('image', ['name' => 'research_images[]']) !!}<a href="#" class="remove_field">remove</a></div> 
+				<p class="add_image_button" >Add image</p></br>
+			</div>	
 			<div class="form-group">
 				{!! Form::submit('Save Note', 
 								['class' => 'btn btn-primary']) !!}

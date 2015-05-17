@@ -20,7 +20,7 @@
 				</tr>
 				@foreach($images as $image)
 					<tr>
-						<td><a href="{{ $image->path }}">{{ $image->path }}</a></td><!-- preferable to have a route here instead to image-->
+						<td><a href="/note_images/{{ $image->path }}">{{ $image->path }}</a></td><!-- preferable to have a route here instead to image-->
 						<td>{{ $image->created_at }}</td>
 					</tr>
 				@endforeach

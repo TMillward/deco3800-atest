@@ -9,6 +9,8 @@
 	{!! HTML::style("css/test2.css", array('title' => 'test2'))!!}
 	<title>@yield("title")</title>
 	{!!HTML::script('scripts/style_change.js')!!}
+	{!!HTML::script("https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js")!!}
+	{!!HTML::script('scripts/file_upload_ui.js')!!}	
 	@yield('javascript')
 </head>
 <body onload="set_style_from_cookie()">

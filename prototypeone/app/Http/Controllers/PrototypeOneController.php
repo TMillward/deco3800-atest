@@ -574,7 +574,7 @@ class PrototypeOneController extends Controller {
 				$photo = new Photo;
 				$photo->research_note_id = $note->research_note_id;
 				// system could change so that this stores only filename and exact path is determined later from note
-				$photo->path = $directory."/".$filename;
+				$photo->path = $directory.$filename;
 				$photo->save();
 				array_push($images, $photo);
 				
