@@ -37,6 +37,12 @@
 				[$user_id]) 
 			!!}
 		</p>
+	@else
+		<p>
+			{!! HTML::linkRoute('view_note_path', 
+				'Click here to go back to your research note', 
+				[$user_id, $research_note->research_note_id]) !!}
+		</p>
 	@endif
 @stop
 
