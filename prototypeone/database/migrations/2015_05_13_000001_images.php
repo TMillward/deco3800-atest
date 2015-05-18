@@ -17,6 +17,8 @@ class Images extends Migration {
 			$table->foreign('research_note_id')
 				  ->references('research_note_id')->on('research_notes')
 				  ->onDelete('cascade');
+			$table->string('dir');
+			$table->string('name');
 			$table->timestamps();
 		});
 	} 

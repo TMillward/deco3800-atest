@@ -42,18 +42,20 @@
 					@for($i = 0; $i < count($images); $i++)
 						<tr>
 							
-							<td>{!! HTML::link("note_images/$images[$i]->path", $images[$i]->path) !!}</td><!-- preferable to have a route here instead to image-->
+							<td>{!! HTML::link("note_images/{$images[$i]->path}", $images[$i]->path) !!}</td><!-- preferable to have a route here instead to image-->
 							<td>{{ $images[$i]->created_at }}</td> 
-							<td>Remove image</td><!--need some way to mark for deletion-->
+							<td class="remove_image" id=$i>Remove image</td><!--need some way to mark for deletion-->
 
 						</tr>
+						
 					@endfor
 					
 				</table>
 				<div class="images_fields_wrap">
-					<button type="button" class="add_image_button" >Add image</button></br>
+					<button type="button" class="add_image_button" >Add image</button><br><br>
 					<div>{!! Form::file('image', ['name' => 'research_images[]']) !!}<a href="#" class="remove_field">remove</a></div>
 				</div>
+				<input type="hidden" name="delete_status">
 			</div>
 			<div class="form-group">
 				{!! Form::submit('Save Note', 

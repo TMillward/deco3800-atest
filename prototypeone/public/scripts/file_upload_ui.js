@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	console.log("started script");
+	
 	var max_files = 5;
 	var wrapper = $(".images_fields_wrap");
 	var add_file_button = $(".add_image_button");

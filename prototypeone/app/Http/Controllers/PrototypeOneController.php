@@ -323,12 +323,13 @@ class PrototypeOneController extends Controller {
 				return redirect()->intended(
 					'home/'.Auth::user()->user_id);
 			}
+				
 			$note = $this->research_notes
 						 ->where('research_note_id', '=', 
 						 	$research_note_id)
 						 ->get()
 						 ->first(); // Get note
-			//delete all photos too from disk and DB
+						
 			
 			return view("prototypeone.deletenoteconfirm", 
 				compact('user', 'note'));
@@ -355,13 +356,15 @@ class PrototypeOneController extends Controller {
 						 	$research_note_id)
 						 ->get()
 						 ->first(); // Get note
-			// Delete the note
-			$note->delete();
-			$images = $this->getPhotos($research_note_id);
+			
+			
+			$images = $this->getPhotos($research_note_id);			
 			//delete each photo
 			for ($i = 0; $i < sizeof($images); $i++) {
-				deletePhoto($research_note_id, $images->path);
+				$this->deletePhoto($research_note_id, $images[$i]->path);
 			}
+			// Delete the note
+			$note->delete();
 			return redirect()->intended('home/'.$user->user_id);
 		} else {
 			return redirect()->route('home_no_user_path');
@@ -588,6 +591,8 @@ class PrototypeOneController extends Controller {
 				$photo->research_note_id = $note->research_note_id;
 				// system could change so that this stores only filename and exact path is determined later from note
 				$photo->path = $directory.$filename;
+				$photo->dir = $directory;
+				$photo->name = $filename;
 				$photo->save();
 				array_push($images, $photo);
 				
@@ -601,24 +606,34 @@ class PrototypeOneController extends Controller {
 	* @require images to be stored on disk in the following system: 
 	* 			/public/note_images/{user_id}/{research_note_id}/{filename}
 	* @require $path is unique.
-	*/
+	*
 	private function savePhoto ($research_note_id, $path) {
 			$photo = new Photo;
 			$message->path = $path;
 			$message->research_note_id = $research_note_id;
 			$message->save(); // Insert message
+	}*/
+	private function deletePhotos ($research_note_id) {
+		$photos = $this->research_photos
+					   ->where('research_note_id', '=', $research_note_id)
+					   ->get();
+		$photos->delete();
 	}
 	/**
-	* Removes an entry from the images table (actual deletion 
-	* from disk will be done elsewhere)
+	* Removes an entry from the images table and from disk
 	*/
 	public function deletePhoto ($research_note_id, $path) {
 		if (Auth::check()) { // User should be logged in
 			
-			$photo = $this->$research_photos
+			$photo = $this->research_photos
 					     ->where('path', '=', $path)
 						 ->get()
 						 -first();
+			
+			
+			//delete from disk
+			unlink("./note_images/".$photo->dir."/".$photo->name);
+
 			$photo->delete();
 			
 		} else { // User not logged on

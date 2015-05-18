@@ -35,7 +35,7 @@
 			</div>
 			<div class="images_fields_wrap">
 				<button type="button" class="add_image_button" >Add image</button>
-				<br>
+				<br><br>
 				<div>{!! Form::file('image', ['name' => 'research_images[]']) !!}<a href="#" class="remove_field">remove</a></div> 
 				
 			</div>	

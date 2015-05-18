@@ -18,7 +18,7 @@ class Photo extends Eloquent {
 	/**
 	* Fillable values
 	*/
-	protected $fillable = ['research_note_id', 'path'];
+	protected $fillable = ['research_note_id', 'path', 'dir', 'name'];
 	/**
 	* Hidden fields
 	*/
