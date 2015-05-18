@@ -30,12 +30,14 @@
 			</table>
 	</div>
 	
-	<p>
-		{!! HTML::linkRoute('view_cases', 
-			'Click here to link back to the list of cases', 
-			[$user_id]) 
-		!!}
-	</p>
+	@if($user->usertype !== "Seeker")
+		<p>
+			{!! HTML::linkRoute('view_cases', 
+				'Click here to link back to the list of cases', 
+				[$user_id]) 
+			!!}
+		</p>
+	@endif
 @stop
 
 @section("message_feed")
