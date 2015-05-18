@@ -23,19 +23,21 @@
 			</tr>
 			@foreach($images as $image)
 				<tr>
-					<td><a href="/note_images/{{ $image->path }}">{{ $image->path }}</a></td><!-- preferable to have a route here instead to image-->
+					<td>{!! HTML::link("note_images/$image->path", $image->path) !!}</td><!-- preferable to have a route here instead to image-->
 					<td>{{ $image->created_at }}</td>
 				</tr>
 			@endforeach
 			</table>
 	</div>
 	
-	<p>
-		{!! HTML::linkRoute('view_cases', 
-			'Click here to link back to the list of cases', 
-			[$user_id]) 
-		!!}
-	</p>
+	@if($user->usertype !== "Seeker")
+		<p>
+			{!! HTML::linkRoute('view_cases', 
+				'Click here to link back to the list of cases', 
+				[$user_id]) 
+			!!}
+		</p>
+	@endif
 @stop
 
 @section("message_feed")

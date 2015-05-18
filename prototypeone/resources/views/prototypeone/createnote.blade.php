@@ -10,7 +10,7 @@
 	<div class="container">
 		<h2>Enter your details here</h2>
 		
-		{!! Form::open(array('url' => route('create_note_check_path', [$user->user_id]), 'files' =>true)) !!}
+		{!! Form::open(array('url' => route('create_note_check_path', [$user->user_id]), 'files' => true)) !!}
 		
 			<div class="form-group {{ $errors->has('title') ? 'has-error' : '' }}">
 				{!! Form::label('title', 
@@ -34,7 +34,8 @@
 								   '<span class="help-block">:message</span>') !!}
 			</div>
 			<div class="images_fields_wrap">
-				<button type="button" class="add_image_button" >Add image</button></br>
+				<button type="button" class="add_image_button" >Add image</button>
+				<br>
 				<div>{!! Form::file('image', ['name' => 'research_images[]']) !!}<a href="#" class="remove_field">remove</a></div> 
 				
 			</div>	
