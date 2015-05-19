@@ -358,11 +358,13 @@ class PrototypeOneController extends Controller {
 						 ->first(); // Get note
 			
 			
-			$images = $this->getPhotos($research_note_id);			
+			$images = $this->getPhotos($research_note_id);	
 			//delete each photo
-			for ($i = 0; $i < sizeof($images); $i++) {
+			for ($i = 0; $i < sizeof($images); $i++) { 
 				$this->deletePhoto($research_note_id, $images[$i]->path);
 			}
+			rmdir("./note_images/".$images->first()->dir);
+			
 			// Delete the note
 			$note->delete();
 			return redirect()->intended('home/'.$user->user_id);
@@ -622,23 +624,17 @@ class PrototypeOneController extends Controller {
 	/**
 	* Removes an entry from the images table and from disk
 	*/
-	public function deletePhoto ($research_note_id, $path) {
-		if (Auth::check()) { // User should be logged in
-			
+	private function deletePhoto ($research_note_id, $path) {
+
 			$photo = $this->research_photos
 					     ->where('path', '=', $path)
 						 ->get()
-						 -first();
-			
-			
+						 ->first();
 			//delete from disk
+			
 			unlink("./note_images/".$photo->dir."/".$photo->name);
 
 			$photo->delete();
-			
-		} else { // User not logged on
-			return redirect()->intended('home_no_user_path');
-		}
 	}
 	
 	/**
