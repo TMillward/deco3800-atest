@@ -4,15 +4,6 @@
 
 @section("content")
 	<h1> Please select what kind of account you would like to create </h1>
-	{!! HTML::ul(
-		array(
-			HTML::linkRoute('seeker_register', 'AT Seeker'),
-			HTML::linkRoute('professional_register', 'AT Professional'),
-			HTML::linkRoute('supplier_register', 'AT Supplier'),
-			HTML::linkRoute('expert_user_register', 
-					'AT Expert User'),
-		))
-	!!}
 	<ul>
 		<li>
 			{!! HTML::linkRoute('seeker_register', 
