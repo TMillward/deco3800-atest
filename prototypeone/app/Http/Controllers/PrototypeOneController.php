@@ -359,11 +359,20 @@ class PrototypeOneController extends Controller {
 			
 			
 			$images = $this->getPhotos($research_note_id);	
-			//delete each photo
-			for ($i = 0; $i < sizeof($images); $i++) { 
-				$this->deletePhoto($research_note_id, $images[$i]->path);
+
+			// Delete each photo if they exist
+			if ($images->count() > 0) {
+				for ($i = 0; $i < sizeof($images); $i++) { 
+					$this->deletePhoto($research_note_id, $images[$i]->path);
+				}
 			}
-			rmdir("./note_images/".$images->first()->dir);
+
+			// The directory containing all the photos of this note
+			$photoDirectory = "./note_images/" . $user_id . "/" . $research_note_id;
+			
+			if (is_dir($photoDirectory)) { // This directory exists. Delete it
+				rmdir("./note_images/". $user_id . "/" . $research_note_id);
+			}
 			
 			// Delete the note
 			$note->delete();
@@ -608,19 +617,14 @@ class PrototypeOneController extends Controller {
 	* @require images to be stored on disk in the following system: 
 	* 			/public/note_images/{user_id}/{research_note_id}/{filename}
 	* @require $path is unique.
-	*
+	*/
 	private function savePhoto ($research_note_id, $path) {
 			$photo = new Photo;
 			$message->path = $path;
 			$message->research_note_id = $research_note_id;
 			$message->save(); // Insert message
-	}*/
-	private function deletePhotos ($research_note_id) {
-		$photos = $this->research_photos
-					   ->where('research_note_id', '=', $research_note_id)
-					   ->get();
-		$photos->delete();
 	}
+
 	/**
 	* Removes an entry from the images table and from disk
 	*/
