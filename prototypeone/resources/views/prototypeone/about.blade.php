@@ -44,6 +44,19 @@
 				"The panel and the AT Seeker can communicate with 
 				each other on the particular case"
 			),
+			"Resolving a Case" => array(
+				"AT Seekers can now resolve their research notes (cases) 
+				once they are satisfied and done with their rsearch"
+			),
+			"Generate a Report" => array(
+				"AT Seekers can now generate a report from a resolved 
+				research note. This will be a PDF which can be downloaded 
+				and/or printed"
+			),
+			"Image Uploading" => array(
+				"AT Seekers can upload images to be added to their research 
+				note"
+			),
 			"More to come...",
 		)) 
 		!!}
