@@ -282,26 +282,18 @@ class PrototypeOneController extends Controller {
 			$slugcontainer = str_slug($request->get('title'), "-");
 			$note->slug = $slugcontainer;
 			$note->save(); // Finish creating Note
-			//save new photos
-			$this->uploadImages($user_id, $note);
+
 			
 			//delete any removed photos
-			/*
-			for ($i = 0; $i < count($request->existing_images); $i++) {
-				if ($request->existing_images[$i][1] == true) {
-					//marked for deletion
-					//remove from DB
-					$photo = $this->research_photos
-								  ->where('path','=',$request->existing_images[$i][0])
-								  ->get();
-					$photo->delete();
-					
-					if (chdir ("./note_images/")) {
-						//delete from disk
-						unlink($request->existing_images[$i][0]);
-					}
+			$existing_images = json_decode($request->get('delete_status'),true);
+			
+			for ($i = 0; $i < count($existing_images)-1; $i++) {
+				if ($existing_images[$i][1] == true) {
+					$this->deletePhoto($research_note_id, $existing_images[$i][0]);
 				}
-			}*/
+			}
+			//save new photos
+			$this->uploadImages($user_id, $note);
 			$images = $this->getPhotos($note->research_note_id);
 			return view("prototypeone.editnoteapproved", 
 				compact('user', 'note', 'images'));
@@ -579,36 +571,36 @@ class PrototypeOneController extends Controller {
 	private function uploadImages ($user_id, $note) {
 		/*photo stuff*/
 		//get files
+		
 		$image_file_count = count(Input::file('research_images'));
 		$images = array(); // Array of images
 		
 		//validate that they are images
 		//rename and move
 		//check dir exists and create it if it does not
-		if (chdir ("./note_images/")) {
-			$directory = $user_id ."/". $note->research_note_id ."/";
-			if (!file_exists($directory)) {
-				mkdir($directory, 0777, true);//permissions need changing
-			}
-			
-			//to be integrated with other for loop below
-			for ($i = 0; $i < $image_file_count; $i++) {
-				$filename = Input::file('research_images')[$i]->getClientOriginalName();
-				//may have to use Input::file('research_images')->...
-				//and change $image_files to a count of the number of elements
-				Input::file('research_images')[$i]->move($directory, $filename);
-				//DB stuff
-				$photo = new Photo;
-				$photo->research_note_id = $note->research_note_id;
-				// system could change so that this stores only filename and exact path is determined later from note
-				$photo->path = $directory.$filename;
-				$photo->dir = $directory;
-				$photo->name = $filename;
-				$photo->save();
-				array_push($images, $photo);
-				
-			}
+		$directory = $user_id ."/". $note->research_note_id ."/";
+		if (!file_exists("./note_images/".$directory)) {
+			mkdir("./note_images/".$directory, 0777, true);//permissions need changing
 		}
+		
+		//to be integrated with other for loop below
+		for ($i = 0; $i < $image_file_count; $i++) {
+			$filename = Input::file('research_images')[$i]->getClientOriginalName();
+			//may have to use Input::file('research_images')->...
+			//and change $image_files to a count of the number of elements
+			Input::file('research_images')[$i]->move("./note_images/".$directory, $filename);
+			//DB stuff
+			$photo = new Photo;
+			$photo->research_note_id = $note->research_note_id;
+			// system could change so that this stores only filename and exact path is determined later from note
+			$photo->path = $directory.$filename;
+			$photo->dir = $directory;
+			$photo->name = $filename;
+			$photo->save();
+			array_push($images, $photo);
+			
+		}
+		
 		return $images;
 	}
 	/**
@@ -636,7 +628,7 @@ class PrototypeOneController extends Controller {
 						 ->first();
 			//delete from disk
 			
-			unlink("./note_images/".$photo->dir."/".$photo->name);
+			unlink("./note_images/".$photo->dir.$photo->name);
 
 			$photo->delete();
 	}

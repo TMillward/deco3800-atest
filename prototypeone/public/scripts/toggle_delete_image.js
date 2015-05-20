@@ -12,8 +12,7 @@ $(document).ready(function () {
 		}
 		
 		//add serialised array as value of hidden field
-		$('[name = "delete_status"]').val($(existing_images).serializeArray());
-		console.log(existing_images[0]);
+		$('[name = "delete_status"]').val(JSON.stringify($(existing_images)));
 	});
 	
 
