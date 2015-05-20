@@ -77,6 +77,18 @@ class RouteTest extends TestCase {
 		$this->assertEquals(200, $supplierResponse->getStatusCode());
 
 	}
+	
+	/**
+	* Check that loading the newAccount post page without 
+	* sending any form data results in a 405 error - not allowed
+	*
+	* @ return void
+	*/
+	public function testNewAccountGetRequest () {
+		$response = $this->call("GET", "/newAccount"); // The HTTP response
+
+		$this->assertEquals(405, $response->getStatusCode()); // Expect 405
+	}
 
 	/**
 	* Check that loading the newAccount post page 
