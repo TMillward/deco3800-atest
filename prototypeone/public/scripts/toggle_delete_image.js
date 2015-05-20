@@ -1,19 +1,21 @@
 $(document).ready(function () {
-	var existing_images = new Array();// this needs to be moved to the top of the page before including this script
-	
+
 	//toggle deletion status of an image
 	$(".remove_image").click(function (event) {
 		var element = $(this).attr('id');
 		if (existing_images[element][1] == false) {
 			existing_images[element][1] = true;
+			$(this).css("background-color", "red");
 		} else if (existing_images[element][1] == true) {
 			existing_images[element][1] = false;
+			$(this).css("background-color", "white");
 		}
+		
 		//add serialised array as value of hidden field
-	}
+		$('[name = "delete_status"]').val($(existing_images).serializeArray());
+		console.log(existing_images[0]);
+	});
 	
-	function update_hidden() {
-		$('[name = "delete_status"]').val(existing_images.serialize());
-	}
+
 
 });
