@@ -13,18 +13,20 @@
 		</p>
 
 		<div id="images">
-			<table class="table table-hover">
-				<tr>
-					<th>Image</th>
-					<th>Date Added</th>
-				</tr>
-				@foreach($images as $image)
+			@if ($images->count() != 0)
+				<table class="table table-hover">
 					<tr>
-						<td>{!! HTML::link("note_images/{$image->path}", $image->path) !!}</td><!-- preferable to have a route here instead to image-->
-						<td>{{ $image->created_at }}</td>
+						<th>Image</th>
+						<th>Date Added</th>
 					</tr>
-				@endforeach
-			</table>
+					@foreach($images as $image)
+						<tr>
+							<td>{!! HTML::link("note_images/{$image->path}", $image->path) !!}</td><!-- preferable to have a route here instead to image-->
+							<td>{{ $image->created_at }}</td>
+						</tr>
+					@endforeach
+				</table>
+			@endif
 		</div>
 		<br><br>
 		<p><strong>Created At: </strong> {{ $note->created_at }} </p>

@@ -3,9 +3,9 @@
 @section("title", "Edit A Research Note")
 
 @section("javascript")
-{!!HTML::script("https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js")!!}
-<script> var existing_images = new Array();</script>
-{!!HTML::script('scripts/toggle_delete_image.js')!!}	
+	{!!HTML::script("https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js")!!}
+	<script> var existing_images = new Array();</script>
+	{!!HTML::script('scripts/toggle_delete_image.js')!!}	
 @section("content")
 	<h1>Edit A New Research Note</h1>
 	
@@ -37,26 +37,28 @@
 			</div>
 			
 			<div id="images">
-				<table class="table table-hover">
-				{!! Form::hidden('delete_status')!!}
-					<tr>
-						<th>Image</th>
-						<th>Date Added</th>
-						<th>Remove</th>
-					</tr>
-					@for($i = 0; $i < count($images); $i++)
-						<script><?php echo "var string = '". $images[$i]->path."';";?>existing_images[{{$i}}] = [string,false]; </script>
+				@if ($images->count() != 0)
+					<table class="table table-hover">
+					{!! Form::hidden('delete_status')!!}
 						<tr>
-							
-							<td>{!! HTML::link("note_images/{$images[$i]->path}", $images[$i]->path) !!}</td><!-- preferable to have a route here instead to image-->
-							<td>{{ $images[$i]->created_at }}</td> 
-							<td ><button type="button" class="remove_image" id={{$i}}>Remove image</button></td><!--need some way to mark for deletion-->
-
+							<th>Image</th>
+							<th>Date Added</th>
+							<th>Remove</th>
 						</tr>
+						@for($i = 0; $i < count($images); $i++)
+							<script><?php echo "var string = '". $images[$i]->path."';";?>existing_images[{{$i}}] = [string,false]; </script>
+							<tr>
+								
+								<td>{!! HTML::link("note_images/{$images[$i]->path}", $images[$i]->path) !!}</td><!-- preferable to have a route here instead to image-->
+								<td>{{ $images[$i]->created_at }}</td> 
+								<td><button type="button" class="remove_image" id="{{$i}}">Remove image</button></td><!--need some way to mark for deletion-->
+
+							</tr>
+							
+						@endfor
 						
-					@endfor
-					
-				</table>
+					</table>
+				@endif
 				<div class="images_fields_wrap">
 					<button type="button" class="add_image_button" >Add image</button><br><br>
 					<div>{!! Form::file('image', ['name' => 'research_images[]']) !!}<a href="#" class="remove_field">remove</a></div>

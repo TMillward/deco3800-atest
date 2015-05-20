@@ -16,6 +16,7 @@
 		{{ $research_note->research_text }} 
 	</p>
 	<div id="images">
+		@if ($images->count() != 0)
 			<table class="table table-hover">
 			<tr>
 				<th>Image</th>
@@ -28,6 +29,7 @@
 				</tr>
 			@endforeach
 			</table>
+		@endif
 	</div>
 	
 	@if($user->usertype !== "Seeker")
