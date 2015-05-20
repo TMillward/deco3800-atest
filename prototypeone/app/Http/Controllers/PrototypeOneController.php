@@ -571,37 +571,41 @@ class PrototypeOneController extends Controller {
 	private function uploadImages ($user_id, $note) {
 		/*photo stuff*/
 		//get files
+		if (Input::hasFile('research_images')){
+			$image_file_count = count(Input::file('research_images'));
 		
-		$image_file_count = count(Input::file('research_images'));
-		$images = array(); // Array of images
-		
-		//validate that they are images
-		//rename and move
-		//check dir exists and create it if it does not
-		$directory = $user_id ."/". $note->research_note_id ."/";
-		if (!file_exists("./note_images/".$directory)) {
-			mkdir("./note_images/".$directory, 0777, true);//permissions need changing
-		}
-		
-		//to be integrated with other for loop below
-		for ($i = 0; $i < $image_file_count; $i++) {
-			$filename = Input::file('research_images')[$i]->getClientOriginalName();
-			//may have to use Input::file('research_images')->...
-			//and change $image_files to a count of the number of elements
-			Input::file('research_images')[$i]->move("./note_images/".$directory, $filename);
-			//DB stuff
-			$photo = new Photo;
-			$photo->research_note_id = $note->research_note_id;
-			// system could change so that this stores only filename and exact path is determined later from note
-			$photo->path = $directory.$filename;
-			$photo->dir = $directory;
-			$photo->name = $filename;
-			$photo->save();
-			array_push($images, $photo);
+			$images = array(); // Array of images
 			
-		}
-		
-		return $images;
+			//validate that they are images
+			//rename and move
+			//check dir exists and create it if it does not
+			$directory = $user_id ."/". $note->research_note_id ."/";
+			if (!file_exists("./note_images/".$directory)) {
+				mkdir("./note_images/".$directory, 0777, true);//permissions need changing
+			}
+			
+			//to be integrated with other for loop below
+			for ($i = 0; $i < $image_file_count; $i++) {
+				$filename = Input::file('research_images')[$i]->getClientOriginalName();
+				//may have to use Input::file('research_images')->...
+				//and change $image_files to a count of the number of elements
+				Input::file('research_images')[$i]->move("./note_images/".$directory, $filename);
+				//DB stuff
+				$photo = new Photo;
+				$photo->research_note_id = $note->research_note_id;
+				// system could change so that this stores only filename and exact path is determined later from note
+				$photo->path = $directory.$filename;
+				$photo->dir = $directory;
+				$photo->name = $filename;
+				$photo->save();
+				array_push($images, $photo);
+				
+			}
+			
+			return $images;
+		} else {
+			return null;
+		}	
 	}
 	/**
 	* Creates an entry in the images table to reference a photo saved on disk.
