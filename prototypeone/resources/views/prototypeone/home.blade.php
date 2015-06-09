@@ -48,7 +48,11 @@
 	
 	@if ($user->usertype === "Seeker")
 		<div class="container">
-			<p>Research Notes: </p>
+			<p>
+				<strong>
+					Research Notes (Please select your note's title to view it): 
+				</strong>
+			</p>
 			<table class="table table-hover">
 				<tr>
 					<th>Research Note Id</th>
