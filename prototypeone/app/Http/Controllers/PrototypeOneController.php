@@ -586,6 +586,8 @@ class PrototypeOneController extends Controller {
 			
 			//to be integrated with other for loop below
 			for ($i = 0; $i < $image_file_count; $i++) {
+				$filename; // The file name to get
+				if (is_null(Input::file('research_images')[$i])) continue;
 				$filename = Input::file('research_images')[$i]->getClientOriginalName();
 				//may have to use Input::file('research_images')->...
 				//and change $image_files to a count of the number of elements
